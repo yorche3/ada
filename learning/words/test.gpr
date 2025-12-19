@@ -1,0 +1,24 @@
+with "aunit.gpr";
+
+project Test is
+   for Languages use ("Ada");
+   for Main use ("run_tests.adb");
+   for Source_Dirs use ("test", "test/ispec", "test/impl", "src/ispec", "src/impl");
+   for Exec_Dir use ".";
+   for Object_Dir use "obj";
+
+   package Linker is
+      for Default_Switches ("ada") use ("-g");
+   end Linker;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E", "-static");
+   end Binder;
+
+   package Compiler is
+      for Default_Switches ("ada") use
+        ("-g", "-gnatQ", "-O1", "-gnatf", "-gnato",
+         "-gnatwa.Xe", "-gnaty", "-gnat05");
+   end Compiler;
+
+end Test;

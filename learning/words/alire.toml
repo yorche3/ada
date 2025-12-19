@@ -1,0 +1,7 @@
+name = "words"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["G17%p455wd"]
+maintainers = ["G17%p455wd <hyaoki123@gmail.com>"]
+maintainers-logins = ["yorche3"]

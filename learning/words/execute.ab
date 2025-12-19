@@ -1,0 +1,46 @@
+task build_project {
+    command "echo" "Building..."
+    command "gprbuild" "-p" "-P" "test.gpr"
+    on_failure {
+        command "echo" "Build failed."
+        command "exit" "1"
+    }
+}
+
+task run_tests {
+    command "./run_tests"
+    on_failure {
+        command "echo" "Tests failed."
+        command "exit" "1"
+    }
+}
+
+task cleanup {
+    command "echo" "Cleaning build artifacts..."
+    command "rm" "-rf" "obj"
+    command "rm" "-f" "run_tests"
+    on_failure {
+        command "echo" "Cleanup failed."
+        command "exit" "1"
+    }
+}
+
+task main {
+    build_project
+    on_success {
+        # Check if the test executable exists
+        command "test" "-f" "./run_tests"
+        on_success {
+            command "echo" "Running tests..."
+            run_tests
+        }
+        on_failure {
+            command "echo" "Error: run_tests not found."
+            command "exit" "1"
+        }
+    }
+    cleanup
+    on_success {
+        command "echo" "Done."
+    }
+}
