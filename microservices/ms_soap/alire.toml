@@ -25,3 +25,6 @@ matreshka_league = "^21.0.0"
 
 [[depends-on]]
 matreshka_xml = "^21.0.0"
+
+[[depends-on]]
+xmlada = "^24.0.0"

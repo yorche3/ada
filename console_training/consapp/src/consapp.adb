@@ -1,6 +1,6 @@
 with Ada.Text_IO; use Ada.Text_IO;
 
-procedure Consapp is
+procedure ConsApp is
 begin
    Put_Line ("Hello World!");
-end Consapp;
+end ConsApp;
