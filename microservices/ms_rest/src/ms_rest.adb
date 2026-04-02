@@ -9,7 +9,7 @@ procedure Ms_Rest is
    Cfg  : AWS.Config.Object;
 begin
    --  Configure the server port
-   AWS.Config.Set.Server_Port (Cfg, 9120);
+   AWS.Config.Set.Server_Port (Cfg, 8080);
 
    --  Register the main dispatcher
    Disp := AWS.Dispatchers.Callback.Create (Routes.Dispatch'Access);
