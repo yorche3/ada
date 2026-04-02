@@ -15,16 +15,16 @@ executables = ["ms_soap"]
 aws = "^24.0.0"
 
 [[depends-on]]
-matreshka_soap = "^21.0.0"
+gnatcoll = "^24.0.0"     # Librerías de utilidad (manejo de logs, config, etc.)
 
 [[depends-on]]
-gnatcoll = "^24.0.0"
+xmlada = "^24.0.0"       # Necesaria para procesar los esquemas XML
+
+[[depends-on]]
+matreshka_soap = "^21.0.0"
 
 [[depends-on]]
 matreshka_league = "^21.0.0"
 
 [[depends-on]]
 matreshka_xml = "^21.0.0"
-
-[[depends-on]]
-xmlada = "^24.0.0"

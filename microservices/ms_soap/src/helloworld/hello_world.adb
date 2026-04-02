@@ -18,7 +18,7 @@ package body Hello_World is
 
    use Ada.Strings.Unbounded;
 
-   function Handler (Request : AWS.Status.Data) return AWS.Response.Data is
+   function Greetings (Request : AWS.Status.Data) return AWS.Response.Data is
       use type AWS.Status.Request_Method;
       Input    : Input_Sources.Strings.String_Input;
       Reader   : DOM.Readers.Tree_Reader;
@@ -89,7 +89,7 @@ package body Hello_World is
                "  </binding>" &
                "  <service name=""HelloService"">" &
                "    <port name=""HelloPort"" binding=""tns:HelloBinding"">" &
-               "      <soap12:address location=""http://localhost:8161/helloworld""/>" &
+               "      <soap12:address location=""http://localhost:8081/helloworld""/>" &
                "    </port>" &
                "  </service>" &
                "</definitions>");
@@ -134,6 +134,11 @@ package body Hello_World is
          return AWS.Response.Build
            (Content_Type => AWS.MIME.Text_Plain,
             Message_Body => "Error: " & Ada.Exceptions.Exception_Message (E));
-   end Handler;
+   end Greetings;
+
+   function Dispatch (Request : AWS.Status.Data) return AWS.Response.Data is
+   begin
+      return Greetings (Request);
+   end Dispatch;
 
 end Hello_World;

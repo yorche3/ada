@@ -1,19 +1,16 @@
-with AWS.Dispatchers;
 with AWS.Messages;
-with AWS.Response;
-with AWS.Status;
 with Hello_World;
 with Hello_User;
 
-package body App_Dispatchers is
+package body Routes is
 
    function Dispatch (Request : AWS.Status.Data) return AWS.Response.Data is
       URI : constant String := AWS.Status.URI (Request);
    begin
       if URI'Length >= 11 and then URI (1 .. 11) = "/helloworld" then
-         return Hello_World.Handler (Request);
+         return Hello_World.Dispatch (Request);
       elsif URI'Length >= 10 and then URI (1 .. 10) = "/hellouser" then
-         return Hello_User.Handler (Request);
+         return Hello_User.Dispatch (Request);
       else
          return AWS.Response.Build
            (Content_Type => "text/plain",
@@ -22,9 +19,4 @@ package body App_Dispatchers is
       end if;
    end Dispatch;
 
-   function Create return AWS.Dispatchers.Callback.Handler is
-   begin
-      return AWS.Dispatchers.Callback.Create (Dispatch'Access);
-   end Create;
-
-end App_Dispatchers;
+end Routes;

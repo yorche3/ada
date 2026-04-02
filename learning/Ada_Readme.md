@@ -11,7 +11,7 @@ How were build unit test projects.
 
 ## Init project
 ```
-alr init --lib project_name
+alr init --(lib|bin) project_name
 ```
 
 ## Structure
