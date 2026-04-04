@@ -1,7 +1,7 @@
 with "config/ms_rest_config.gpr";
 project Ms_Rest is
 
-   for Source_Dirs use ("src/", "config/", "src/helloworld/", "src/hellouser/");
+   for Source_Dirs use ("src/**", "config/");
    for Object_Dir use "obj/" & Ms_Rest_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
