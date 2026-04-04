@@ -1,6 +1,10 @@
-with Ada.Text_IO; use Ada.Text_IO;
+--with Helloworld;
+with HelloUser;
 
 procedure ConsApp is
 begin
-   Put_Line ("Hello World!");
+   -- Aquí eliges qué submódulo ejecutar
+   --Helloworld.Run;
+   HelloUser.Run;
+
 end ConsApp;
