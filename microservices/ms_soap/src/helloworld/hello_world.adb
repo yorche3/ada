@@ -5,8 +5,6 @@ with Ada.Strings.Unbounded;
 
 with AWS.MIME;
 with AWS.Parameters;
-with AWS.Response;
-with AWS.Status;
 
 with DOM.Core;
 with DOM.Readers;
@@ -22,7 +20,6 @@ package body Hello_World is
       use type AWS.Status.Request_Method;
       Input    : Input_Sources.Strings.String_Input;
       Reader   : DOM.Readers.Tree_Reader;
-      Doc      : DOM.Core.Document;
 
       function Get_Payload (Req : AWS.Status.Data) return String is
          use Ada.Streams;
@@ -89,7 +86,7 @@ package body Hello_World is
                "  </binding>" &
                "  <service name=""HelloService"">" &
                "    <port name=""HelloPort"" binding=""tns:HelloBinding"">" &
-               "      <soap12:address location=""http://localhost:8081/helloworld""/>" &
+               "      <soap12:address location=""http://localhost:8080/helloworld""/>" &
                "    </port>" &
                "  </service>" &
                "</definitions>");
@@ -113,7 +110,6 @@ package body Hello_World is
       --  Parse the incoming XML payload using XMLAda
       Input_Sources.Strings.Open (Payload, Unicode.CES.Utf8.Utf8_Encoding, Input);
       DOM.Readers.Parse (Reader, Input);
-      Doc := DOM.Readers.Get_Tree (Reader);
       DOM.Readers.Free (Reader);
 
       --  Construct the SOAP Response

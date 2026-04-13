@@ -1,17 +1,21 @@
 with AWS.Messages;
 with Helloworld;
-with Hellouser;
+with Hello_User;
+with Logging;
 
 package body Routes is
 
    function Dispatch (Request : AWS.Status.Data) return AWS.Response.Data is
       URI : constant String := AWS.Status.URI (Request);
    begin
+      Logging.Debug ("Incoming request: " & URI);
+
       if URI'Length >= 11 and then URI (1 .. 11) = "/helloworld" then
          return Helloworld.Dispatch (Request);
       elsif URI'Length >= 10 and then URI (1 .. 10) = "/hellouser" then
-         return Hellouser.Dispatch (Request);
+         return Hello_User.Dispatch (Request);
       else
+         Logging.Warning ("Route not found: " & URI);
          return AWS.Response.Build
            (Content_Type => "text/plain",
             Message_Body => "Not Found",

@@ -1,165 +1,127 @@
-with Ada.Exceptions;
-with Ada.Strings.Unbounded;
+with Ada.Strings.Unbounded;        use Ada.Strings.Unbounded;
+with Ada.Strings;                   use Ada.Strings;
 
 with AWS.Messages;
 with AWS.Parameters;
 with AWS.Translator;
+with Ada.Strings.Fixed;
+with Ada.Exceptions;               use Ada.Exceptions;
 
-with DOM.Core;
-with DOM.Core.Nodes;
-with DOM.Core.Documents;
-with DOM.Readers;
-with Input_Sources.Strings;
-with Unicode.CES.Utf8;
+with User_Protocols;               use User_Protocols;
+with Error_Response;               use Error_Response;
+with Logging;                      use Logging;
 
 package body Hello_User is
 
-   use Ada.Strings.Unbounded;
-
+   ---------------------------------------------------------------------------
+   -- Greetings - Procesa operación SOAP de saludo
+   ---------------------------------------------------------------------------
    function Greetings (Request : AWS.Status.Data) return AWS.Response.Data is
-      use type DOM.Core.Node;
-      use type AWS.Status.Request_Method;
-      Content  : constant String := AWS.Translator.To_String (AWS.Status.Binary_Data (Request));
-      Input    : Input_Sources.Strings.String_Input;
-      Reader   : DOM.Readers.Tree_Reader;
-      Doc      : DOM.Core.Document;
-      Nodes    : DOM.Core.Node_List;
-      Name     : Unbounded_String;
-      Response : Unbounded_String;
+      Content   : constant String := AWS.Translator.To_String (AWS.Status.Binary_Data (Request));
+      Client_IP : constant String := AWS.Status.Peername (Request);
+      
+      User       : User_Request;
+      Validation : Validation_Result;
    begin
-      --  1. Verificación de cuerpo vacío (equivalente a tu validación REST)
-      if Content = "" then
+      -- Log de inicio de procesamiento SOAP
+      Log_SOAP_Request (SOAP_Logger, Request, "greetings", Client_IP, 
+                        "Processing SOAP greetings request");
+      
+      -- Verificar contenido vacío
+      if Content'Length = 0 then
+         Logging.Error ("Empty SOAP body received", SOAP_Logger);
          return AWS.Response.Build
-           (Content_Type => "application/soap+xml",
-            Message_Body => "<?xml version=""1.0""?><soap:Fault xmlns:soap=""http://www.w3.org/2003/05/soap-envelope"">" &
-                            "<soap:Code><soap:Value>soap:Sender</soap:Value></soap:Code>" &
-                            "<soap:Reason><soap:Text xml:lang=""en"">Empty Body</soap:Text></soap:Reason></soap:Fault>",
+           (Content_Type => "text/xml; charset=utf-8",
+            Message_Body => Validation_To_SOAP_Fault (Missing_XML_Element),
             Status_Code  => AWS.Messages.S400);
       end if;
-
-      --  2. Parseo del XML
-      Input_Sources.Strings.Open (Content, Unicode.CES.Utf8.Utf8_Encoding, Input);
-      DOM.Readers.Parse (Reader, Input);
-      Doc := DOM.Readers.Get_Tree (Reader);
-
-      --  3. Lógica de negocio: Buscar el elemento <Name> (equivalente a JSON.Has_Field ("name"))
-      Nodes := DOM.Core.Documents.Get_Elements_By_Tag_Name (Doc, "Name");
       
-      if DOM.Core.Nodes.Length (Nodes) > 0 then
-         declare
-            -- Extraemos el valor del nodo de texto hijo de <Name>
-            Val_Node : constant DOM.Core.Node := DOM.Core.Nodes.First_Child (DOM.Core.Nodes.Item (Nodes, 0));
-         begin
-            if Val_Node /= null and then DOM.Core.Nodes.Node_Value (Val_Node)'Length > 0 then
-               Name := To_Unbounded_String (DOM.Core.Nodes.Node_Value (Val_Node));
-            else
-               -- Si el nodo existe pero está vacío (<Name></Name>)
-               DOM.Readers.Free (Reader);
+      -- Log del contenido XML (solo para depuración)
+      Logging.Debug ("SOAP XML Content (first 100 chars): " & 
+                     (if Content'Length > 100 then Content (1 .. 100) else Content), XML_Logger);
+      
+      -- Parsear XML SOAP usando User_Protocols
+      Validation := Create_From_SOAP_XML (Content, User);
+      
+      -- Procesar resultado de validación
+      case Validation is
+         when Valid =>
+            -- Validar contenido del usuario
+            if not Is_Valid_User (User) then
+               Logging.Error ("Invalid user data after parsing", SOAP_Logger);
                return AWS.Response.Build
                  (Content_Type => "application/soap+xml",
-                  Message_Body => "<?xml version=""1.0""?>" &
-                                  "<soap:Envelope xmlns:soap=""http://www.w3.org/2003/05/soap-envelope"">" &
-                                  "<soap:Body><soap:Fault><soap:Code><soap:Value>soap:Sender</soap:Value></soap:Code>" &
-                                  "<soap:Reason><soap:Text xml:lang=""en"">The 'Name' field cannot be empty</soap:Text></soap:Reason>" &
-                                  "</soap:Fault></soap:Body></soap:Envelope>",
+                  Message_Body => Validation_To_SOAP_Fault (Invalid_Content_Length),
                   Status_Code  => AWS.Messages.S400);
             end if;
-         end;
 
-         DOM.Readers.Free (Reader);
-
-         --  Construcción de la respuesta SOAP
-         Append (Response, "<?xml version=""1.0""?>");
-         Append (Response, "<soap:Envelope xmlns:soap=""http://www.w3.org/2003/05/soap-envelope"">");
-         Append (Response, "  <soap:Body>");
-         Append (Response, "    <m:HelloUserResponse xmlns:m=""http://example.org/soap/user"">");
-         Append (Response, "      <m:Message>Hello, " & To_String (Name) & "!</m:Message>");
-         Append (Response, "    </m:HelloUserResponse>");
-         Append (Response, "  </soap:Body>");
-         Append (Response, "</soap:Envelope>");
-
-         return AWS.Response.Build
-           (Content_Type => "application/soap+xml",
-            Message_Body => To_String (Response));
-      else
-         DOM.Readers.Free (Reader);
-         return AWS.Response.Build
-           (Content_Type => "application/soap+xml",
-            Message_Body => "<?xml version=""1.0""?><error>Missing 'Name' element</error>",
-            Status_Code  => AWS.Messages.S400);
-      end if;
-
+            -- Obtener nombre y generar respuesta exitosa
+            declare
+               User_Name : constant String := Get_Name (User);
+            begin
+               Logging.Info ("Valid request for user: " & User_Name, SOAP_Logger);
+               
+               return AWS.Response.Build
+                 (Content_Type => "application/soap+xml",
+                  Message_Body => Build_SOAP_Success_Response (User_Name),
+                  Status_Code  => AWS.Messages.S200);
+            end;
+            
+         when others =>
+            -- Error de validación
+            Logging.Warning ("Validation error: " & Validation'Image, SOAP_Logger);
+            
+            return AWS.Response.Build
+              (Content_Type => "application/soap+xml",
+               Message_Body => Validation_To_SOAP_Fault (Validation),
+               Status_Code  => AWS.Messages.S400);
+      end case;
+      
    exception
       when E : others =>
-         return AWS.Response.Build
-           (Content_Type => "application/soap+xml",
-            Message_Body => "<?xml version=""1.0""?><error>Invalid XML: " & 
-                            Ada.Exceptions.Exception_Message (E) & "</error>",
-            Status_Code  => AWS.Messages.S400);
+         -- Error inesperado - Server Fault
+         declare
+            Error_Msg : constant String := Ada.Strings.Fixed.Trim (Ada.Exceptions.Exception_Message (E), Ada.Strings.Both);
+         begin
+            Logging.Error ("Unexpected error in Greetings: " & Error_Msg, SOAP_Logger);
+            
+            return AWS.Response.Build
+              (Content_Type => "application/soap+xml",
+               Message_Body => Build_SOAP_Response (SOAP_Server_Fault,
+                                                   "Internal server error",
+                                                   "Server",
+                                                   "Internal processing error"),
+               Status_Code  => AWS.Messages.S500);
+         end;
    end Greetings;
 
-   function Wdsls (Request : AWS.Status.Data) return AWS.Response.Data is
+   ---------------------------------------------------------------------------
+   -- WSDL - Genera documento WSDL del servicio
+   ---------------------------------------------------------------------------
+   function WSDL (Request : AWS.Status.Data) return AWS.Response.Data is
+      Client_IP : constant String := AWS.Status.Peername (Request);
    begin
+      -- Log de solicitud WSDL
+      Log_SOAP_Request (SOAP_Logger, Request, "WSDL",
+                        Client_IP, "Generating WSDL document");
+      
+      Logging.Info ("Generating WSDL for SOAP service", SOAP_Logger);
+      
       return AWS.Response.Build
         (Content_Type => "text/xml",
-         Message_Body =>
-            "<?xml version=""1.0"" encoding=""UTF-8""?>" &
-            "<definitions xmlns=""http://schemas.xmlsoap.org/wsdl/"" " &
-            "xmlns:soap12=""http://schemas.xmlsoap.org/wsdl/soap12/"" " &
-            "xmlns:tns=""http://example.org/soap/user"" " &
-            "xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" " &
-            "targetNamespace=""http://example.org/soap/user"" " &
-            "name=""HelloUserService"">" &
-            "  <types>" &
-            "    <xsd:schema targetNamespace=""http://example.org/soap/user"">" &
-            "      <xsd:element name=""HelloUserRequest"">" &
-            "        <xsd:complexType>" &
-            "          <xsd:sequence>" &
-            "            <xsd:element name=""Name"" type=""xsd:string""/>" &
-            "          </xsd:sequence>" &
-            "        </xsd:complexType>" &
-            "      </xsd:element>" &
-            "      <xsd:element name=""HelloUserResponse"">" &
-            "        <xsd:complexType>" &
-            "          <xsd:sequence>" &
-            "            <xsd:element name=""Message"" type=""xsd:string""/>" &
-            "          </xsd:sequence>" &
-            "        </xsd:complexType>" &
-            "      </xsd:element>" &
-            "    </xsd:schema>" &
-            "  </types>" &
-            "  <message name=""HelloUserRequest"">" &
-            "    <part name=""parameters"" element=""tns:HelloUserRequest""/>" &
-            "  </message>" &
-            "  <message name=""HelloUserResponse"">" &
-            "    <part name=""parameters"" element=""tns:HelloUserResponse""/>" &
-            "  </message>" &
-            "  <portType name=""HelloUserPortType"">" &
-            "    <operation name=""HelloUser"">" &
-            "      <input message=""tns:HelloUserRequest""/>" &
-            "      <output message=""tns:HelloUserResponse""/>" &
-            "    </operation>" &
-            "  </portType>" &
-            "  <binding name=""HelloUserBinding"" type=""tns:HelloUserPortType"">" &
-            "    <soap12:binding style=""document"" transport=""http://schemas.xmlsoap.org/soap/http""/>" &
-            "    <operation name=""HelloUser"">" &
-            "      <soap12:operation soapAction=""http://example.org/soap/HelloUser""/>" &
-            "      <input><soap12:body use=""literal""/></input>" &
-            "      <output><soap12:body use=""literal""/></output>" &
-            "    </operation>" &
-            "  </binding>" &
-            "  <service name=""HelloUserService"">" &
-            "    <port name=""HelloUserPort"" binding=""tns:HelloUserBinding"">" &
-            "      <soap12:address location=""http://localhost:8081/hellouser""/>" &
-            "    </port>" &
-            "  </service>" &
-            "</definitions>");
-   end Wdsls;
+         Message_Body => Build_WSDL_Response);
+   end WSDL;
 
+   ---------------------------------------------------------------------------
+   -- Dispatch - Dispatcher principal para rutas /hellouser
+   ---------------------------------------------------------------------------
    function Dispatch (Request : AWS.Status.Data) return AWS.Response.Data is
    begin
+      -- Log del dispatch
+      Logging.Debug ("Dispatching to SOAP service", HelloUser_Logger);
+      
       if AWS.Parameters.Exist (AWS.Status.Parameters (Request), "wsdl") then
-         return Wdsls (Request);
+         return WSDL (Request);
       else
          return Greetings (Request);
       end if;

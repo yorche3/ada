@@ -9,10 +9,13 @@ licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
 website = ""
 tags = []
 
-executables = ["ms_rest"]
+executables = ["ms_rest", "run_tests"]
 
 [[depends-on]]
 aws = "^24.0.0"
 
 [[depends-on]]
 gnatcoll = "^24.0.0"
+
+[[depends-on]]
+aunit = "^26.0.0"
