@@ -9,13 +9,13 @@ licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
 website = ""
 tags = []
 
-executables = ["ms_soap"]
+executables = ["ms_soap", "run_tests"]
 
 [[depends-on]]
 aws = "^24.0.0"
 
 [[depends-on]]
-gnatcoll = "^24.0.0"     # Librerías de utilidad (manejo de logs, config, etc.)
+gnatcoll = "^24.0.0"     # LibrerÃ­as de utilidad (manejo de logs, config, etc.)
 
 [[depends-on]]
 xmlada = "^24.0.0"       # Necesaria para procesar los esquemas XML
@@ -28,3 +28,6 @@ matreshka_league = "^21.0.0"
 
 [[depends-on]]
 matreshka_xml = "^21.0.0"
+
+[[depends-on]]
+aunit = "^26.0.0"

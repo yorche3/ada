@@ -1,11 +1,11 @@
 with "config/ms_soap_config.gpr";
 project Ms_Soap is
 
-   for Source_Dirs use ("src/**", "config/");
+   for Source_Dirs use ("src/**", "config/", "tests/**");
    for Object_Dir use "obj/" & Ms_Soap_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
-   for Main use ("ms_soap.adb");
+   for Main use ("ms_soap.adb", "run_tests.adb");
 
    package Compiler is
       for Default_Switches ("Ada") use Ms_Soap_Config.Ada_Compiler_Switches;

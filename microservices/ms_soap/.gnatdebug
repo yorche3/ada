@@ -1,0 +1,30 @@
+# Structured logging configuration per best practices
+# See: GNAT Coll Library Documentation - Debug Streams
+
+# Output stream configuration
+>&2             # Send to stderr
+FILE=yes       # Also send to file
+>ms_soap.log   # File path
+
+# Decorators for enhanced logging
+DEBUG.ABSOLUTE_TIME=yes      # Add timestamp
+DEBUG.MICRO_TIME=yes         # Microsecond precision
+DEBUG.COLORS=yes             # Colorize output
+DEBUG.SPLIT_LINES=yes        # Split multi-line messages
+DEBUG.FINALIZE_TRACES=yes    # Ensure clean shutdown
+
+# Module-specific configuration
+MS_SOAP.SERVER=yes
+MS_SOAP.ROUTES=yes
+MS_SOAP.HELLOUSER=yes
+
+# Log format specification
+format=%d %t.%i %L [%f] %m
+
+# Format explanation:
+# %d - Date (YYYY-MM-DD)
+# %t - Time (HH:MM:SS)
+# %i - Milliseconds
+# %L - Log level abbreviation
+# %f - Full logger name
+# %m - Message text

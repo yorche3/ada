@@ -1,10 +1,12 @@
 with AWS.Messages;
+with Logging;
 
 package body Helloworld is
 
    function Greetings (Request : AWS.Status.Data) return AWS.Response.Data is
       pragma Unreferenced (Request);
    begin
+      Logging.Info ("GET /helloworld/hello");
       return AWS.Response.Build
         (Content_Type => "application/json",
          Message_Body => "{""message"": ""Hello, World!""}");
@@ -16,6 +18,7 @@ package body Helloworld is
       if URI = "/helloworld/hello" then
          return Greetings (Request);
       else
+         Logging.Warning ("Helloworld: route not found: " & URI);
          return AWS.Response.Build
            (Content_Type => "text/plain",
             Message_Body => "Not Found",
