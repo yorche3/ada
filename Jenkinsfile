@@ -40,7 +40,7 @@ pipeline {
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                bash -c "alr --non-interactive index --update-all && alr --non-interactive build --accept-config-scripts"
+                                bash -c "alr --non-interactive index --update-all && alr --non-interactive build"
                         """
                     }
                 }
