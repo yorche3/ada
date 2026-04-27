@@ -34,21 +34,19 @@ pipeline {
         stage('GNATCheck Analysis') {
             steps {
                 script {
-                    // Limpiamos y creamos el directorio de reportes
                     bat 'if exist reports rd /s /q reports'
                     bat 'mkdir reports'
                     
                     def projects = getProjects()
                     projects.each { project ->
-                        // Ajustamos parámetros:
-                        // 1. Usamos -rules +RDefault_Checks y +RStyle_Checks en lugar de --all-checks
-                        // 2. Simplificamos a un formato de salida para evitar errores de versión
+                        // 1. Cambiamos el Working Directory (-w) a /workspace (la raíz)
+                        // 2. Apuntamos al archivo GPR usando la ruta completa: ${project.path}/${project.gpr}
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
-                                -w /workspace/${project.path} ^
+                                -w /workspace ^
                                 %IMAGE% ^
-                                gnatcheck -P${project.gpr} ^
+                                gnatcheck -P${project.path}/${project.gpr} ^
                                     -rules +RDefault_Checks +RStyle_Checks ^
                                     --output-dir=/workspace/reports/${project.path} ^
                                     --output-format=html ^
