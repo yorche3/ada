@@ -45,7 +45,7 @@ pipeline {
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                gnat check -P${project.gpr} ^
+                                gnatcheck -P${project.gpr} ^
                                     --all-checks ^
                                     --style ^
                                     --output-dir=/workspace/reports/${project.path} ^
