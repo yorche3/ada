@@ -24,7 +24,24 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    bat "docker build -t %IMAGE% ." 
+                    bat "docker build -t %IMAGE% ."
+                }
+            }
+        }
+
+        stage('Resolve Dependencies & Build') {
+            steps {
+                script {
+                    def projects = getProjects()
+                    projects.each { project ->
+                        bat """
+                            docker run --rm ^
+                                -v %cd%:/workspace ^
+                                -w /workspace/${project.path} ^
+                                %IMAGE% ^
+                                alr build
+                        """
+                    }
                 }
             }
         }
@@ -37,18 +54,16 @@ pipeline {
                     
                     def projects = getProjects()
                     projects.each { project ->
-                        // Ejecutamos alr printenv para regenerar los archivos de configuración
-                        // Luego ejecutamos gnatcheck desde la raíz del proyecto (-w)
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                bash -c "alr printenv && gnatcheck -P${project.gpr} ^
+                                gnatcheck -P${project.gpr} ^
                                     -rules +RDefault_Checks +RStyle_Checks ^
                                     --output-dir=/workspace/reports/${project.path} ^
                                     --output-format=html ^
-                                    --info"
+                                    --info
                         """
                     }
                 }
