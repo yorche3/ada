@@ -34,16 +34,13 @@ pipeline {
                 script {
                     def projects = getProjects()
                     projects.each { project ->
-                        // 1. Añadimos -v para ver el error real si falla
-                        // 2. Forzamos la descarga de toolchains antes del build
+                        // --accept-config-scripts permite que AWS/GtkAda ejecuten sus scripts de configuración
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                bash -c "alr --non-interactive toolchain --select gnat_native && ^
-                                         alr --non-interactive toolchain --select gprbuild && ^
-                                         alr --non-interactive build"
+                                bash -c "alr --non-interactive build"
                         """
                     }
                 }
