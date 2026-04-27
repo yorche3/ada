@@ -54,12 +54,13 @@ pipeline {
                     
                     def projects = getProjects()
                     projects.each { project ->
+                        // Agregado 'alr exec --' para resolver gnatcheck desde Alire
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                gnatcheck -P${project.gpr} ^
+                                alr exec -- gnatcheck -P${project.gpr} ^
                                     -rules +RDefault_Checks +RStyle_Checks ^
                                     --output-dir=/workspace/reports/${project.path} ^
                                     --output-format=html ^
