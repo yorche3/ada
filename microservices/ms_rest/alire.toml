@@ -9,7 +9,7 @@ licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
 website = ""
 tags = []
 
-executables = ["ms_rest", "run_tests"]
+executables = ["ms_rest"]
 
 [[depends-on]]
 aws = "^24.0.0"
