@@ -17,7 +17,7 @@ RUN apt-get update && \
     libssl-dev \
     zlib1g-dev \
     libgtk-3-dev \
-    libc6-dev \
+    libc6-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # 2. Descargar e instalar Alire 2.1.0 globalmente
