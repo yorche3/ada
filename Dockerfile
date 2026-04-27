@@ -13,12 +13,12 @@ RUN apt-get update && \
     make \
     python3 \
     git \
+    asis-programs \
     # Librerías de sistema necesarias para AWS, SOAP y GUI
     libssl-dev \
     zlib1g-dev \
     libgtk-3-dev \
-    libc6-dev \
-    asis-programs && \
+    libc6-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # 2. Descargar e instalar Alire 2.1.0 globalmente
