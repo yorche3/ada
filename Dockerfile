@@ -2,11 +2,9 @@ FROM alire/gnat:ubuntu-lts
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. Instalamos todas las dependencias del sistema
+# 1. Instalamos todas las dependencias del sistema sin el GNAT antiguo
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    gnat \
-    asis-programs \
     curl \
     unzip \
     ca-certificates \
