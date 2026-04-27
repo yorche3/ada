@@ -2,14 +2,16 @@ FROM alire/gnat:ubuntu-lts
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. Instalamos dependencias
+# 1. Instalamos dependencias (añadiendo GTK3 y pkg-config)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gnat \
     asis-programs \
     curl \
     unzip \
-    ca-certificates && \
+    ca-certificates \
+    pkg-config \
+    libgtk-3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # 2. Instalar Alire 2.1.0
@@ -19,8 +21,7 @@ RUN curl -fSL https://github.com/alire-project/alire/releases/download/v2.1.0/al
     chmod +x /usr/bin/alr && \
     rm -rf /tmp/alr.zip /tmp/alr_extracted
 
-# 3. Forzar a Alire a detectar las herramientas del sistema (GNAT y GPRbuild)
-# Esto evita que intente descargarlas después en Jenkins
+# 3. Configuración de herramientas del sistema
 RUN alr --non-interactive toolchain --select gnat_native && \
     alr --non-interactive toolchain --select gprbuild
 
