@@ -34,13 +34,13 @@ pipeline {
                 script {
                     def projects = getProjects()
                     projects.each { project ->
-                        // Añadido --non-interactive para evitar bloqueos
+                        // --accept-config-scripts permite que AWS/GtkAda ejecuten sus scripts de configuración
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                alr --non-interactive build
+                                bash -c "alr --non-interactive index --update-all && alr --non-interactive build --accept-config-scripts"
                         """
                     }
                 }
@@ -55,6 +55,7 @@ pipeline {
                     
                     def projects = getProjects()
                     projects.each { project ->
+                        // Se usa --non-interactive también aquí para evitar cuelgues
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
