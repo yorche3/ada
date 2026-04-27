@@ -1,4 +1,3 @@
-// Definimos la lista de proyectos fuera del pipeline para que sea accesible
 def getProjects() {
     return [
         [path: 'console_training/consapp', gpr: 'consapp.gpr'],
@@ -25,7 +24,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Usamos %IMAGE% para la variable de entorno de Jenkins en Windows
                     bat "docker build -t %IMAGE% ." 
                 }
             }
@@ -39,18 +37,18 @@ pipeline {
                     
                     def projects = getProjects()
                     projects.each { project ->
-                        // 1. Cambiamos el Working Directory (-w) a /workspace (la raíz)
-                        // 2. Apuntamos al archivo GPR usando la ruta completa: ${project.path}/${project.gpr}
+                        // Ejecutamos alr printenv para regenerar los archivos de configuración
+                        // Luego ejecutamos gnatcheck desde la raíz del proyecto (-w)
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
-                                -w /workspace ^
+                                -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                gnatcheck -P${project.path}/${project.gpr} ^
+                                bash -c "alr printenv && gnatcheck -P${project.gpr} ^
                                     -rules +RDefault_Checks +RStyle_Checks ^
                                     --output-dir=/workspace/reports/${project.path} ^
                                     --output-format=html ^
-                                    --info
+                                    --info"
                         """
                     }
                 }
@@ -59,7 +57,6 @@ pipeline {
 
         stage('Archive Reports') {
             steps {
-                // El allowEmptyArchive ayuda si algún análisis no genera resultados
                 archiveArtifacts artifacts: 'reports/**/*.html', allowEmptyArchive: true
             }
         }
