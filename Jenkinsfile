@@ -12,7 +12,6 @@ pipeline {
     agent any
 
     environment {
-        // Solo variables de entorno tipo String aquí
         IMAGE = 'gnatcheck-image'
     }
 
@@ -26,7 +25,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Cambiamos sh por bat
+                    // Usamos %IMAGE% para la variable de entorno de Jenkins en Windows
                     bat "docker build -t %IMAGE% ." 
                 }
             }
@@ -35,21 +34,24 @@ pipeline {
         stage('GNATCheck Analysis') {
             steps {
                 script {
-                    bat 'if not exist reports mkdir reports' // Comando mkdir estilo Windows
+                    // Limpiamos y creamos el directorio de reportes
+                    bat 'if exist reports rd /s /q reports'
+                    bat 'mkdir reports'
                     
                     def projects = getProjects()
                     projects.each { project ->
-                        // En bat, las variables se acceden con %VAR% o se inyectan desde Groovy
+                        // Ajustamos parámetros:
+                        // 1. Usamos -rules +RDefault_Checks y +RStyle_Checks en lugar de --all-checks
+                        // 2. Simplificamos a un formato de salida para evitar errores de versión
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
                                 gnatcheck -P${project.gpr} ^
-                                    --all-checks ^
-                                    --style ^
+                                    -rules +RDefault_Checks +RStyle_Checks ^
                                     --output-dir=/workspace/reports/${project.path} ^
-                                    --output-format=html,xml ^
+                                    --output-format=html ^
                                     --info
                         """
                     }
@@ -59,7 +61,8 @@ pipeline {
 
         stage('Archive Reports') {
             steps {
-                archiveArtifacts artifacts: 'reports/**/*.html,reports/**/*.xml', allowEmptyArchive: true
+                // El allowEmptyArchive ayuda si algún análisis no genera resultados
+                archiveArtifacts artifacts: 'reports/**/*.html', allowEmptyArchive: true
             }
         }
     }
