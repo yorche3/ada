@@ -1,8 +1,8 @@
 FROM alire/gnat:ubuntu-lts
 
-# Asegura que gnat check esté disponible
+# Instalamos gnat y las herramientas de ASIS (donde reside gnatcheck)
 RUN apt-get update && \
-    apt-get install -y gnat && \
+    apt-get install -y gnat asis-programs && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace
