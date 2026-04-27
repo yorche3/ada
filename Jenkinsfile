@@ -34,12 +34,13 @@ pipeline {
                 script {
                     def projects = getProjects()
                     projects.each { project ->
+                        // Añadido --non-interactive para evitar bloqueos
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                alr build
+                                alr --non-interactive build
                         """
                     }
                 }
@@ -54,13 +55,12 @@ pipeline {
                     
                     def projects = getProjects()
                     projects.each { project ->
-                        // Agregado 'alr exec --' para resolver gnatcheck desde Alire
                         bat """
                             docker run --rm ^
                                 -v %cd%:/workspace ^
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
-                                alr exec -- gnatcheck -P${project.gpr} ^
+                                alr --non-interactive exec -- gnatcheck -P${project.gpr} ^
                                     -rules +RDefault_Checks +RStyle_Checks ^
                                     --output-dir=/workspace/reports/${project.path} ^
                                     --output-format=html ^
