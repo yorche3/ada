@@ -18,9 +18,6 @@ RUN apt-get update && \
     zlib1g-dev \
     libgtk-3-dev \
     libc6-dev \
-    # GNAT del sistema (necesario para arrancar Alire)
-    gnat \
-    gprbuild && \
     rm -rf /var/lib/apt/lists/*
 
 # 2. Descargar e instalar Alire 2.1.0 globalmente
