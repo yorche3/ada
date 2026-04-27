@@ -26,8 +26,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Usamos comillas dobles para que Groovy interpole la variable IMAGE
-                    sh "docker build -t ${IMAGE} ."
+                    // Cambiamos sh por bat
+                    bat "docker build -t %IMAGE% ." 
                 }
             }
         }
@@ -35,25 +35,21 @@ pipeline {
         stage('GNATCheck Analysis') {
             steps {
                 script {
-                    sh 'mkdir -p reports'
+                    bat 'if not exist reports mkdir reports' // Comando mkdir estilo Windows
                     
-                    // Llamamos a la función que definimos arriba
                     def projects = getProjects()
-
                     projects.each { project ->
-                        def projectPath = project.path
-                        def gprFile = project.gpr
-
-                        sh """
-                            docker run --rm \
-                                -v \$(pwd):/workspace \
-                                -w /workspace/${projectPath} \
-                                ${IMAGE} \
-                                gnat check -P${gprFile} \
-                                    --all-checks \
-                                    --style \
-                                    --output-dir=/workspace/reports/${projectPath} \
-                                    --output-format=html,xml \
+                        // En bat, las variables se acceden con %VAR% o se inyectan desde Groovy
+                        bat """
+                            docker run --rm ^
+                                -v %cd%:/workspace ^
+                                -w /workspace/${project.path} ^
+                                %IMAGE% ^
+                                gnat check -P${project.gpr} ^
+                                    --all-checks ^
+                                    --style ^
+                                    --output-dir=/workspace/reports/${project.path} ^
+                                    --output-format=html,xml ^
                                     --info
                         """
                     }
