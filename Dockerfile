@@ -2,7 +2,7 @@ FROM alire/gnat:ubuntu-lts
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. Instalamos dependencias (añadiendo GTK3 y pkg-config)
+# 1. Instalamos todas las dependencias del sistema
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gnat \
@@ -11,7 +11,12 @@ RUN apt-get update && \
     unzip \
     ca-certificates \
     pkg-config \
-    libgtk-3-dev && \
+    # Dependencias para GUI (GtkAda)
+    libgtk-3-dev \
+    # Dependencias para Microservicios/Red (AWS / OpenSSL)
+    libssl-dev \
+    # Dependencia extra común para compilación de C en Ada
+    build-essential && \
     rm -rf /var/lib/apt/lists/*
 
 # 2. Instalar Alire 2.1.0
@@ -21,7 +26,7 @@ RUN curl -fSL https://github.com/alire-project/alire/releases/download/v2.1.0/al
     chmod +x /usr/bin/alr && \
     rm -rf /tmp/alr.zip /tmp/alr_extracted
 
-# 3. Configuración de herramientas del sistema
+# 3. Configurar Alire para usar las herramientas del sistema
 RUN alr --non-interactive toolchain --select gnat_native && \
     alr --non-interactive toolchain --select gprbuild
 
