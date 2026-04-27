@@ -2,21 +2,22 @@ FROM alire/gnat:ubuntu-lts
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. Instalamos todas las dependencias del sistema
+# 1. Instalamos TODAS las dependencias de sistema necesarias
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
     unzip \
     ca-certificates \
     pkg-config \
+    build-essential \
     asis-programs \
-    # Dependencias para GUI (GtkAda)
-    libgtk-3-dev \
-    # Dependencias para Microservicios (AWS / OpenSSL / Zlib)
+    # Librerías de desarrollo (Cabeceras + Binarios)
     libssl-dev \
     zlib1g-dev \
-    # Herramientas de compilación para crates que usan C (como AWS)
-    build-essential && \
+    libgtk-3-dev \
+    # Herramientas auxiliares que AWS suele pedir en sus Makefiles
+    make \
+    libc6-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # 2. Instalar Alire 2.1.0
@@ -26,7 +27,7 @@ RUN curl -fSL https://github.com/alire-project/alire/releases/download/v2.1.0/al
     chmod +x /usr/bin/alr && \
     rm -rf /tmp/alr.zip /tmp/alr_extracted
 
-# 3. Configurar Alire para usar las herramientas del sistema (Pre-configurado)
+# 3. Configuración de Toolchain para evitar descargas externas
 RUN alr --non-interactive toolchain --select gnat_native && \
     alr --non-interactive toolchain --select gprbuild
 
