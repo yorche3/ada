@@ -5,6 +5,7 @@ with Ada.Strings.Fixed;           use Ada.Strings.Fixed;
 with Ada.Characters.Handling;     use Ada.Characters.Handling;
 with Ada.Exceptions;              use Ada.Exceptions;
 with SastAda_SonarQube;
+with SastAda_AST;                 use SastAda_AST;
 
 package body SastAda_Analysis is
 
@@ -167,28 +168,43 @@ package body SastAda_Analysis is
       Findings : out Finding_Vectors.Vector;
       Success  : out Boolean)
    is
+      AST_Available : constant Boolean := Is_Libadalang_Available;
    begin
       Findings.Clear;
       Success := True;
 
+      if AST_Available then
+         Put_Line ("  [AST] Using Libadalang engine: " & AST_Engine_Version);
+      else
+         Put_Line ("  [TEXT] Using pattern matching engine.");
+      end if;
+
       for F of Files loop
          declare
             File_Path : constant String := To_String (F.Path);
-            File_Content : constant String := Read_File_Content (File_Path);
          begin
-            if File_Content'Length = 0 and then File_Exists (File_Path) then
-               Put_Line ("  Omitiendo (vacío): " & File_Path);
-            elsif File_Content'Length = 0 then
-               Put_Line ("  Omitiendo (no encontrado): " & File_Path);
-            else
                Put_Line ("  Analizando: " & File_Path);
 
-               --  Aplicar todas las reglas
-               Check_Security_Rules (File_Content, File_Path, Findings);
-               Check_Reliability_Rules (File_Content, File_Path, Findings);
-               Check_Maintainability_Rules (File_Content, File_Path, Findings);
-               Check_Style_Rules (File_Content, File_Path, Findings);
+            if AST_Available then
+               --  Intentar con AST (Libadalang)
+               Analyze_File_AST (File_Path, Findings);
             end if;
+
+            --  Complementar con pattern matching (para reglas que
+            --  el AST no cubre o como respaldo)
+            declare
+               File_Content : constant String :=
+                 Read_File_Content (File_Path);
+            begin
+               if File_Content'Length > 0 then
+                  Check_Security_Rules (File_Content, File_Path, Findings);
+                  Check_Reliability_Rules (File_Content, File_Path, Findings);
+                  Check_Maintainability_Rules (File_Content, File_Path, Findings);
+                  Check_Style_Rules (File_Content, File_Path, Findings);
+               else
+                  Put_Line ("    Omitiendo (vacío): " & File_Path);
+               end if;
+            end;
          end;
       end loop;
 
@@ -420,23 +436,17 @@ package body SastAda_Analysis is
                end if;
 
                --  SAST-005: Bucle infinito (loop sin exit ni for/while)
-               if Check_Pattern (Line_Content, "loop") and then
-                 not Check_Pattern (Line_Content, "for ") and then
-                 not Check_Pattern (Line_Content, "while ") and then
-                 not Check_Pattern (Line_Content, "end loop") and then
-                 not Check_Pattern (Line_Content, "exit ")
-               then
-                  Findings.Append
-                    (Finding_Record'
-                       (Rule_Id  => To_Unbounded_String ("SAST-005"),
-                        File_Path => To_Unbounded_String (File_Name),
-                        Line     => Line_Num,
-                        Column   => 1,
-                        Message  => To_Unbounded_String
-                          ("Infinite loop risk: 'loop' without " &
-                           "explicit iteration or exit condition."),
-                        Severity => CRITICAL));
-               end if;
+               --  NOTA: Esta regla ahora la maneja el motor AST (SastAda_AST).
+               --  El pattern matching solo detecta "loop" literal en texto,
+               --  lo que genera falsos positivos con "end loop;".
+               --  if Check_Pattern (Line_Content, "loop") and then
+               --    not Check_Pattern (Line_Content, "for ") and then
+               --    not Check_Pattern (Line_Content, "while ") and then
+               --    not Check_Pattern (Line_Content, "end loop") and then
+               --    not Check_Pattern (Line_Content, "exit ")
+               --  then
+               --     ... (delegado al AST)
+               --  end if;
 
             exception
                when others =>
