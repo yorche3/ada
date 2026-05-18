@@ -38,6 +38,9 @@ package body SastAda_SonarQube is
          Append (Result, """,");
          Append (Result, ASCII.LF);
 
+         Append (Result, "      ""engineId"": ""SastAda"",");
+         Append (Result, ASCII.LF);
+
          Append (Result, "      ""severity"": """);
          Append (Result, Severity_To_SonarQube (F.Severity));
          Append (Result, """,");

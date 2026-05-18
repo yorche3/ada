@@ -13,6 +13,7 @@ package SastAda_Analysis is
       Project_File : Unbounded_String;     --  Archivo .gpr del proyecto
       Output_File  : Unbounded_String;     --  Archivo de reporte SonarQube
       Project_Path : Unbounded_String;     --  Ruta base del proyecto (para rutas relativas)
+      Suppressions : Suppress_Vectors.Vector;  --  Reglas suprimidas
    end record;
 
    --  Inicializa la configuración de análisis
@@ -21,7 +22,8 @@ package SastAda_Analysis is
       Cache_File   : String := ".sastada_cache";
       Project_File : String := "";
       Output_File  : String := "sastada_report.json";
-      Project_Path : String := "")
+      Project_Path : String := "";
+      Suppressions : Suppress_Vectors.Vector := Suppress_Vectors.Empty_Vector)
       return Analysis_Config;
 
    --  Ejecuta el análisis incremental
@@ -36,38 +38,8 @@ package SastAda_Analysis is
       Success   : out Boolean);
 
 private
-   --  Análisis basado en texto (pattern matching) por simplicidad
-   --  En producción, usaría Libadalang para AST completo
-
-   --  Busca patrones de texto en una línea
-   function Check_Pattern
-     (Line      : String;
-      Pattern   : String;
-      Ignore_Case : Boolean := False) return Boolean;
-
-   --  Cuenta el nivel de indentación (profundidad de anidamiento aproximada)
-   function Count_Nesting_Depth (Lines : String) return Natural;
-
-   --  Verifica reglas de seguridad
+   --  SAST-008: Credenciales hardcodeadas (búsqueda de texto)
    procedure Check_Security_Rules
-     (Lines     : String;
-      File_Name : String;
-      Findings  : in out Finding_Vectors.Vector);
-
-   --  Verifica reglas de confiabilidad
-   procedure Check_Reliability_Rules
-     (Lines     : String;
-      File_Name : String;
-      Findings  : in out Finding_Vectors.Vector);
-
-   --  Verifica reglas de mantenibilidad
-   procedure Check_Maintainability_Rules
-     (Lines     : String;
-      File_Name : String;
-      Findings  : in out Finding_Vectors.Vector);
-
-   --  Verifica reglas de estilo
-   procedure Check_Style_Rules
      (Lines     : String;
       File_Name : String;
       Findings  : in out Finding_Vectors.Vector);

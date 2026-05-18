@@ -1,5 +1,7 @@
 --  Implementación de las reglas SAST
 
+with Ada.Strings.Fixed;           use Ada.Strings.Fixed;
+
 package body SastAda_Rules is
 
    ---------------------
@@ -190,5 +192,36 @@ package body SastAda_Rules is
       --  SonarQube usa: BLOCKER, CRITICAL, MAJOR, MINOR, INFO
       return Severity_To_String (S);
    end Severity_To_SonarQube;
+
+   -----------------
+   -- Is_Suppressed --
+   -----------------
+
+   function Is_Suppressed
+     (Finding      : Finding_Record;
+      Suppressions : Suppress_Vectors.Vector) return Boolean
+   is
+      F_Rule : constant String := To_String (Finding.Rule_Id);
+      F_File : constant String := To_String (Finding.File_Path);
+   begin
+      for S of Suppressions loop
+         declare
+            S_Rule : constant String := To_String (S.Rule_Id);
+            S_File : constant String := To_String (S.File_Pat);
+         begin
+            if S_Rule = F_Rule then
+               --  Si no hay archivo específico, suprime para todos
+               if S_File = "" then
+                  return True;
+               end if;
+               --  Si hay archivo, verificar coincidencia
+               if Ada.Strings.Fixed.Index (F_File, S_File) > 0 then
+                  return True;
+               end if;
+            end if;
+         end;
+      end loop;
+      return False;
+   end Is_Suppressed;
 
 end SastAda_Rules;
