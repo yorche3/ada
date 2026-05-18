@@ -36,6 +36,21 @@ package SastAda_Rules is
      (Index_Type   => Positive,
       Element_Type => Finding_Record);
 
+   --  Entrada para suppress: regla + archivo (opcional)
+   type Suppress_Entry is record
+      Rule_Id  : Unbounded_String;  --  "SAST-005"
+      File_Pat : Unbounded_String;  --  "" para todos, o "src/file.adb"
+   end record;
+
+   package Suppress_Vectors is new Ada.Containers.Vectors
+     (Index_Type   => Positive,
+      Element_Type => Suppress_Entry);
+
+   --  Verifica si un hallazgo debe suprimirse
+   function Is_Suppressed
+     (Finding      : Finding_Record;
+      Suppressions : Suppress_Vectors.Vector) return Boolean;
+
    --  Retorna la lista de reglas activas
    function Get_Active_Rules return Rule_Vectors.Vector;
 

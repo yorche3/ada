@@ -10,8 +10,10 @@
 with Ada.Text_IO;                 use Ada.Text_IO;
 with Ada.Command_Line;            use Ada.Command_Line;
 with Ada.Strings.Unbounded;       use Ada.Strings.Unbounded;
+with Ada.Strings.Fixed;           use Ada.Strings.Fixed;
 with Ada.Exceptions;              use Ada.Exceptions;
 with Ada.Directories;             use Ada.Directories;
+with SastAda_Rules;               use SastAda_Rules;
 with SastAda_Analysis;            use SastAda_Analysis;
 
 procedure SastAda is
@@ -159,12 +161,42 @@ procedure SastAda is
    Output       : Unbounded_String;
    Cache        : Unbounded_String;
    Project      : Unbounded_String;
+   Supps        : Suppress_Vectors.Vector;
    Config       : Analysis_Config;
    Success      : Boolean;
 
 begin
    --  Parsear argumentos
    Parse_Args (Project_Path, Src_Dir, Output, Cache, Project);
+
+   --  Parsear --suppress (después de Parse_Args para simplificar)
+   for I in 1 .. Argument_Count loop
+      declare
+         Full_Arg : constant String := Argument (I);
+      begin
+         if Full_Arg'Length >= 11 and then
+           Full_Arg (Full_Arg'First .. Full_Arg'First + 10) = "--suppress="
+         then
+            declare
+               Val : constant String :=
+                 Full_Arg (Full_Arg'First + 11 .. Full_Arg'Last);
+               Sep : constant Natural :=
+                 Ada.Strings.Fixed.Index (Val, ":");
+               E   : Suppress_Entry;
+            begin
+               if Sep > 0 then
+                  E.Rule_Id  := To_Unbounded_String (Val (1 .. Sep - 1));
+                  E.File_Pat := To_Unbounded_String (Val (Sep + 1 .. Val'Last));
+               else
+                  E.Rule_Id  := To_Unbounded_String (Val);
+                  E.File_Pat := To_Unbounded_String ("");
+               end if;
+               Supps.Append (E);
+               Put_Line ("Suppressing: " & To_String (E.Rule_Id));
+            end;
+         end if;
+      end;
+   end loop;
 
    if Argument_Count = 0 then
       Print_Usage;
@@ -192,7 +224,8 @@ begin
       Cache_File   => To_String (Cache),
       Project_File => To_String (Project),
       Output_File  => To_String (Output),
-      Project_Path => To_String (Project_Path));
+      Project_Path => To_String (Project_Path),
+      Suppressions => Supps);
 
    --  Ejecutar análisis
    Run_Analysis (Config, Success);
