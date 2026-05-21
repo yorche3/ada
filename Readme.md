@@ -1,20 +1,36 @@
-# Ada
+---
+layout: default
+title: Ada
+description: Monorepo de aprendizaje y experimentación con Ada — fundamentos, microservicios, interfaces gráficas, SAST y CI/CD / Learning and experimentation monorepo with Ada — foundations, microservices, GUI, SAST and CI/CD
+nav_order: 1
+has_children: true
+---
 
-Monorepo de aprendizaje y experimentacion con **Ada** — desde fundamentos del lenguaje hasta microservicios, interfaces graficas, SAST y CI/CD.
+# 🅰️ Ada
 
-## Requisitos
+> [← Volver al inicio / Back to home](../index.md)
 
-- **Alire** >= 2.1.0 — gestor de paquetes y build system
-- **Toolchain** (configurada con `alr toolchain`):
-  - `gnat_native` **15.2.1** (compilador GNAT)
-  - `gprbuild` **25.0.1** (sistema de compilacion)
-- **Opcional** (segun el submodulo):
-  - `gtkada` — para GUI (GTK)
-  - `aws` + `gnatcoll` — para microservicios REST
-  - `aws` + `matreshka_soap` + `xmlada` — para microservicios SOAP
-  - `libadalang` — para SAST (SastAda)
+---
 
-### Instalacion rapida
+**ES:** Monorepo de aprendizaje y experimentación con **Ada** — desde fundamentos del lenguaje hasta microservicios, interfaces gráficas, SAST y CI/CD. Cada proyecto dentro de este directorio implementa una o más especificaciones definidas en [`docs/`](../docs/).
+
+**EN:** Learning and experimentation monorepo with **Ada** — from language foundations to microservices, GUI, SAST and CI/CD. Each project within this directory implements one or more specifications defined in [`docs/`](../docs/).
+
+---
+
+## 📋 Toolchain
+
+**ES:** Todos los proyectos Ada usan la misma toolchain, configurada globalmente con Alire:
+
+**EN:** All Ada projects use the same toolchain, globally configured with Alire:
+
+| Herramienta / Tool | Versión | Propósito / Purpose |
+|-------------------|---------|--------------------|
+| **Alire** | 2.1.0 | Gestor de paquetes y sistema de compilación / Package manager and build system |
+| **gnat_native** | 15.2.1 | Compilador GNAT para Ada / GNAT compiler for Ada |
+| **gprbuild** | 25.0.1 | Sistema de compilación basado en proyectos / Project-based build system |
+
+### Instalación / Installation
 
 ```bash
 # Descargar e instalar Alire 2.1.0 (Linux x86_64)
@@ -32,78 +48,85 @@ alr toolchain --select gprbuild=25.0.1
 alr toolchain
 ```
 
-> **Tip:** Tambien puedes usar el `Dockerfile` incluido para un entorno reproducible.
-> `docker build -t ada-env . && docker run --rm -it ada-env`
+> **Tip:** También puedes usar el `Dockerfile` incluido para un entorno reproducible.  
+> **Tip:** You can also use the included `Dockerfile` for a reproducible environment.
+> ```bash
+> docker build -t ada-env . && docker run --rm -it ada-env
+> ```
 
 ---
 
-## Estructura del proyecto
+## 📁 Estructura / Structure
 
-```
+```text
 ada/
-├── console_training/consapp/   #  Aplicaciones CLI (GNAT.Terminal, etc.)
-├── gui_training/guiapp/        #  Interfaces graficas con GtkAda
-├── learning/                   #  Fundamentos y algoritmos
-│   ├── helloworld/             #      Hola mundo
-│   ├── hellouser/              #      Entrada de usuario
-│   ├── numbers/                #      Algoritmos numericos (iterativo/recursivo)
-│   ├── unit_test/              #      Demo de pruebas unitarias con AUnit
-│   └── words/                  #      Procesamiento de texto
-├── microservices/              #  APIs y servicios web
-│   ├── ms_rest/                #      API REST con AWS
-│   └── ms_soap/                #      API SOAP con Matreshka
-├── sastada/                    #  SAST (Static Application Security Testing)
-├── Dockerfile                  #  Entorno reproducible para CI/CD
-├── Jenkinsfile                 #  Pipeline Jenkins
-└── LICENSE                     #  Licencia GPL-3.0
+├── core/                    # Implementaciones de docs/core/ (fundamentos)
+│   └── foundations/
+│       ├── hello_world/     # 01_Hello_World.md
+│       └── hello_user/      # 02_Hello_User.md
+├── console_training/        # Aplicaciones CLI (GNAT.Terminal, etc.)
+├── gui_training/            # Interfaces gráficas con GtkAda
+├── learning/                # Proyectos de aprendizaje previos (referencia)
+├── microservices/           # APIs y servicios web
+├── sastada/                 # SAST (Static Application Security Testing)
+├── Dockerfile               # Entorno reproducible para CI/CD
+├── Jenkinsfile              # Pipeline Jenkins
+└── LICENSE                  # Licencia GPL-3.0
 ```
 
 ---
 
-## Comandos Alire
+## 🚀 Comandos básicos / Basic Commands
 
-```bash
-alr init --bin <project_name>   # Inicializar proyecto binario
-alr init --lib <project_name>   # Inicializar biblioteca
-alr with <crate_name>           # Agregar dependencia a proyecto
-alr build                       # Compilar y generar ejecutables
-alr run [executable_name]       # Compilar e iniciar un ejecutable especifico
-alr toolchain                   # Ver toolchain configurada
-alr --non-interactive build     # Build en modo no interactivo (CI/CD)
-alr test                        # Ejecutar pruebas unitarias
-```
-
-### Sobre `alr test`
-
-`alr test` busca ejecutables definidos con `alr test ...` en `alire.toml`, pero no siempre funciona segun la configuracion del proyecto. Como alternativa, este monorepo usa **dos ejecutables independientes**:
-
-```bash
-alr run project_name     # Ejecutar el programa principal
-alr run run_tests        # Ejecutar las pruebas unitarias (AUnit)
-```
-
-Tambien hay scripts auxiliares en `learning/words/`:
-
-| Script              | Plataforma  |
-|---------------------|-------------|
-| `execute.sh`        | Linux/macOS |
-| `execute.ps1`       | Windows     |
-| `execute.bat`       | Windows     |
-| `execute.ab`        | Any     |
-
-Ejemplo de uso:
-```bash
-cd learning/words
-./execute.sh           # Compila test.gpr y ejecuta run_tests
-```
+| Comando / Command | Descripción / Description |
+|-------------------|--------------------------|
+| `alr exec -- gprbuild -P <project>.gpr` | Compilar un proyecto manual / Build a manual project |
+| `alr build` | Compilar con Alire (proyectos `alr init`) |
+| `alr run [name]` | Ejecutar un proyecto Alire |
+| `alr toolchain` | Ver toolchain configurada / View configured toolchain |
+| `alr with <crate>` | Agregar dependencia / Add dependency |
 
 ---
 
-## Submodulos en detalle
+## 🔬 Pruebas unitarias / Unit Testing
 
-### `console_training/consapp`
+**ES:** Los proyectos usan **AUnit** (el framework de pruebas unitarias estándar para Ada). Ver [`learning/Ada_Readme.md`](learning/Ada_Readme.md) para una guía detallada de estructura de pruebas.
 
-Proposito: Aprender a construir aplicaciones de terminal / CLI en Ada, actualmente explorando `GNAT.Terminal` y otras opciones.
+**EN:** Projects use **AUnit** (the standard unit testing framework for Ada). See [`learning/Ada_Readme.md`](learning/Ada_Readme.md) for a detailed guide on test structure.
+
+---
+
+## 🧩 Submódulos / Submodules
+
+### `core/` — Fundamentos (nuevo / new)
+
+**ES:** Implementaciones siguiendo la estructura definida en [`docs/core/`](../docs/core/). Cada proyecto es **manual** (sin `alr init`), con archivos mínimos.
+
+**EN:** Implementations following the structure defined in [`docs/core/`](../docs/core/). Each project is **manual** (without `alr init`), with minimal files.
+
+| Proyecto / Project | Especificación / Specification |
+|-------------------|-------------------------------|
+| [`hello_world`](core/foundations/hello_world/) | [`01_Hello_World.md`](../docs/core/foundations/01_Hello_World.md) |
+| [`hello_user`](core/foundations/hello_user/) | [`02_Hello_User.md`](../docs/core/foundations/02_Hello_User.md) |
+
+### `learning/` — Proyectos de aprendizaje / Learning projects
+
+**ES:** Proyectos previos de referencia. Suelen ser bibliotecas (`alr init --lib`) con pruebas unitarias.
+
+**EN:** Previous reference projects. Usually libraries (`alr init --lib`) with unit tests.
+
+| Proyecto / Project | Descripción / Description |
+|-------------------|--------------------------|
+| `helloworld` | Hola mundo clásico (`Ada.Text_IO`) |
+| `hellouser` | Entrada de usuario con `Get_Line` |
+| `numbers` | Algoritmos numéricos (factorial, Fibonacci, etc.) |
+| `unit_test` | Demo de pruebas unitarias con AUnit |
+| `words` | Procesamiento de texto (conteo, análisis, etc.) |
+
+### `console_training/` — CLI
+
+**ES:** Aplicaciones de terminal.  
+**EN:** Terminal applications.
 
 **Dependencias:** `gnatcoll`
 
@@ -113,11 +136,10 @@ alr build
 alr run consapp
 ```
 
----
+### `gui_training/` — GUI
 
-### `gui_training/guiapp`
-
-Proposito: Aprender a construir interfaces graficas con **GtkAda** (bindings de GTK para Ada).
+**ES:** Interfaces gráficas con **GtkAda** (bindings de GTK para Ada).  
+**EN:** Graphical interfaces with **GtkAda** (GTK bindings for Ada).
 
 **Dependencias:** `gtkada`
 
@@ -127,85 +149,26 @@ alr build
 alr run guiapp
 ```
 
----
+### `microservices/` — APIs
 
-### `learning/`
-
-Proyectos de aprendizaje sobre fundamentos de Ada y algoritmos. Suelen ser bibliotecas (`--lib`) con pruebas unitarias.
-
-| Proyecto       | Descripcion                                           |
-|----------------|-------------------------------------------------------|
-| `helloworld`   | Hola mundo clasico (`Ada.Text_IO`)                    |
-| `hellouser`    | Entrada de usuario con `Get_Line`                     |
-| `numbers`      | Algoritmos numericos (factorial, Fibonacci, etc.)     |
-| `unit_test`    | Demo de pruebas unitarias con **AUnit**               |
-| `words`        | Procesamiento de texto (conteo, analisis, etc.)       |
-
-Cada proyecto `--lib` incluye:
-
-- **`project_name.gpr`** — proyecto principal (ej. `words.gpr`, `numbers.gpr`)
-- **`test.gpr`** — proyecto de pruebas que hereda fuentes del principal y depende de `aunit.gpr`
-- **`tests/`** — directorio con suites y casos de prueba
-- **`src/ispec/`** — especificaciones (`.ads`)
-- **`src/impl/`** — implementaciones (`.adb`)
+| Proyecto / Project | Tipo / Type | Dependencias / Dependencies |
+|-------------------|-------------|---------------------------|
+| `ms_rest` | API REST con AWS | `aws`, `gnatcoll`, `aunit` |
+| `ms_soap` | API SOAP con Matreshka | `aws`, `gnatcoll`, `xmlada`, `matreshka_soap`, `aunit` |
 
 ```bash
-cd learning/<proyecto>
-
-# Compilar y ejecutar el programa principal
-gprbuild -p -P words.gpr
-./bin/words
-
-# Compilar y ejecutar las pruebas
-gprbuild -p -P test.gpr
-./run_tests
-```
-
-O usando Alire (si el ejecutable esta declarado en `alire.toml`):
-```bash
-alr run words      # Programa principal
-alr run run_tests  # Pruebas unitarias
-```
-
-> Ver `learning/Ada_Readme.md` para una guia detallada de como estructurar pruebas con AUnit.
-
----
-
-### `microservices/`
-
-#### `ms_rest` — API REST
-
-Servicio REST construido con **AWS** (Ada Web Server).
-
-**Dependencias:** `aws`, `gnatcoll`, `aunit`
-
-```bash
-cd microservices/ms_rest
+cd microservices/ms_rest   # o ms_soap
 alr build
-alr run ms_rest
-alr run run_tests     # Pruebas de integracion
+alr run ms_rest           # o ms_soap
+alr run run_tests         # Pruebas de integración
 ```
 
-#### `ms_soap` — API SOAP
+### `sastada/` — SAST
 
-Servicio SOAP construido con **Matreshka SOAP** + **AWS**.
+**ES:** Herramienta de **Static Application Security Testing** para Ada. Analiza código fuente, aplica reglas de seguridad y genera reportes en formato SonarQube.  
+**EN:** **Static Application Security Testing** tool for Ada. Analyzes source code, applies security rules and generates SonarQube-format reports.
 
-**Dependencias:** `aws`, `gnatcoll`, `xmlada`, `matreshka_soap`, `matreshka_league`, `matreshka_xml`, `aunit`
-
-```bash
-cd microservices/ms_soap
-alr build
-alr run ms_soap
-alr run run_tests     # Pruebas de integracion
-```
-
----
-
-### `sastada` — SAST para Ada
-
-Herramienta de **Static Application Security Testing (SAST)** para Ada. Analiza codigo fuente, aplica reglas de seguridad y genera reportes en formato **SonarQube**.
-
-**Dependencias:** `libadalang` (analisis sintactico/semantico de Ada)
+**Dependencias:** `libadalang`
 
 ```bash
 cd sastada
@@ -213,112 +176,34 @@ alr build
 alr run sastada -- --help
 ```
 
-**Uso:**
-
-```bash
-# Analizar un proyecto completo
-sastada --project-path=/ruta/al/proyecto
-
-# Especificar directorio fuente y archivo de salida
-sastada --project-path=/ruta --output=report.json
-
-# Directorio fuente personalizado
-sastada --project-path=/ruta --src-dir=src_sub
-
-# Analisis incremental (cache)
-sastada --project-path=/ruta --cache=.sastada_cache
-
-# Con archivo .gpr explicito
-sastada --project-path=/ruta --project=mi_proyecto.gpr
-```
-
-El reporte generado (`sastada_report.json`) se puede importar directamente en **SonarQube** para el seguimiento de calidad y seguridad del codigo.
-
 ---
 
-## CI/CD — Jenkins
+## 🐳 Docker / CI/CD
 
-El `Jenkinsfile` define un pipeline que:
+**ES:** El `Dockerfile` construye una imagen basada en **Ubuntu 24.04** con Alire 2.1.0 y la toolchain completa. El `Jenkinsfile` define un pipeline que compila todos los submódulos.
 
-1. **Build** de la imagen Docker (`gnatcheck-image`)
-2. **Resolucion de dependencias y compilacion** de los proyectos:
-   - `console_training/consapp`
-   - `gui_training/guiapp`
-   - `microservices/ms_rest`
-   - `microservices/ms_soap`
-3. **Archivo de reportes** de los artefactos generados
-
-> **Nota:** El pipeline incluye una etapa de analisis con `gnatcheck`, pero actualmente **no se usa** debido a problemas de compatibilidad con Alire. La alternativa contemplada es **SastAda** (incluido en este monorepo) para el analisis SAST, y su integracion con SonarQube para la visualizacion de resultados.
-
-```groovy
-// Ejecucion en contenedor Docker
-docker run --rm \
-    -v $(pwd):/workspace \
-    -w /workspace/${project.path} \
-    gnatcheck-image \
-    bash -c "alr --non-interactive build"
-```
-
-> Se usa `--non-interactive` para evitar que Alire espere entrada en modo CI.
-
----
-
-## Docker
-
-El `Dockerfile` construye una imagen basada en **Ubuntu 24.04** con:
-
-- Alire 2.1.0
-- Toolchain: `gnat_native=15.2.1`, `gprbuild=25.0.1`
-- Bibliotecas de sistema: GTK3, OpenSSL, zlib, etc.
-- Variables de entorno para enlazado correcto (`LIBRARY_PATH`, `LD_LIBRARY_PATH`, `PKG_CONFIG_PATH`)
+**EN:** The `Dockerfile` builds an image based on **Ubuntu 24.04** with Alire 2.1.0 and the full toolchain. The `Jenkinsfile` defines a pipeline that compiles all submodules.
 
 ```bash
-# Construir
+# Construir imagen / Build image
 docker build -t ada-env .
 
-# Usar
+# Usar / Use
 docker run --rm -v $(pwd):/workspace -w /workspace/<submodulo> ada-env alr build
 ```
 
 ---
 
-## Dependencias por modulo
+## 📚 Recursos / Resources
 
-| Submodulo               | Dependencias principales                                                       |
-|-------------------------|--------------------------------------------------------------------------------|
-| `console_training`      | `gnatcoll`                                                                     |
-| `gui_training`          | `gtkada`                                                                       |
-| `learning/*`            | `aunit` (pruebas)                                                              |
-| `microservices/ms_rest` | `aws`, `gnatcoll`, `aunit`                                                     |
-| `microservices/ms_soap` | `aws`, `gnatcoll`, `xmlada`, `matreshka_soap`, `matreshka_league`, `matreshka_xml`, `aunit` |
-| `sastada`               | `libadalang`                                                                   |
-
----
-
-## Licencia
-
-**GNU GENERAL PUBLIC LICENSE**
-Version 3, 29 June 2007
-Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
-
-Este programa es software libre: puedes redistribuirlo y/o modificarlo bajo los terminos de la GNU General Public License publicada por la Free Software Foundation, ya sea la version 3 de la Licencia, o (a tu eleccion) cualquier version posterior.
-
-Ver el archivo `LICENSE` para mas detalles.
-
----
-
-## Contribuciones
-
-Las contribuciones son bienvenidas. Si tienes ejemplos, algoritmos o mejoras para compartir, abre un PR o un issue.
-
----
-
-## Recursos
-
-- [Ada Documentation](https://learn.adacore.com/)
-- [Alire Package Manager](https://alire.ada.dev/)
+- [Ada Documentation — learn.adacore.com](https://learn.adacore.com/)
+- [Alire Package Manager — alire.ada.dev](https://alire.ada.dev/)
 - [GtkAda](https://github.com/AdaCore/gtkada)
 - [AWS — Ada Web Server](https://github.com/AdaCore/aws)
 - [Matreshka](https://forge.ada-ru.org/matreshka)
 - [Libadalang](https://github.com/AdaCore/libadalang)
 - [SonarQube](https://www.sonarsource.com/products/sonarqube/)
+
+---
+
+*🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages)*

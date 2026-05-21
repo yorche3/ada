@@ -1,0 +1,15 @@
+project Hello_User is
+   for Languages use ("Ada");
+   
+   package Builder is
+      for Switches ("Ada") use ("-s");  --  Recompile if source changes
+   end Builder;
+   for Object_Dir use "obj";
+   for Create_Missing_Dirs use "True";
+   for Exec_Dir use "bin";
+   for Main use ("hello_user.adb");
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
+end Hello_User;

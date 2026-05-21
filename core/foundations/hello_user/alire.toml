@@ -1,0 +1,12 @@
+name = "hello_user"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Jorge Ascencio"]
+maintainers = ["Jorge Ascencio <yorchek@gmail.com>"]
+maintainers-logins = ["yorche3"]
+licenses = "MIT OR Apache-2.0"
+website = ""
+tags = []
+
+executables = ["hello_user"]
