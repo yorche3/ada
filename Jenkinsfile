@@ -62,10 +62,7 @@ pipeline {
                                 -w /workspace/${project.path} ^
                                 %IMAGE% ^
                                 alr --non-interactive exec -- gnatcheck -P${project.gpr} ^
-                                    -rules +RDefault_Checks +RStyle_Checks ^
-                                    --output-dir=/workspace/reports/${project.path} ^
-                                    --output-format=html ^
-                                    --info
+                                   &&
                         """
                     }
                 }

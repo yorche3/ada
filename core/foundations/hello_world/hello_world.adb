@@ -1,6 +1,5 @@
-
 with Text_IO; use Text_IO;
-procedure helloworld is
+procedure Hello_World is
 begin
    Put_Line("Hello, World! from Ada!");
-end helloworld;
+end Hello_World;
