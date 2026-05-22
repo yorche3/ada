@@ -1,6 +1,6 @@
 # Hello, User! — Ada
 
-Implementación de la especificación [`02_Hello_User.md`](../../../../docs/core/foundations/02_Hello_User.md) en **Ada**, siguiendo el mismo enfoque **manual y minimalista** que [`hello_world`](../hello_world/).
+Implementación de la especificación [02_Hello_User](https://yorche3.github.io/programming_languages/core/foundations/02_Hello_User/) en **Ada**, siguiendo el mismo enfoque **manual y minimalista** que [`hello_world`](../hello_world/).
 
 ---
 
@@ -49,9 +49,9 @@ end Hello_User;
 
 ### `hello_user.gpr` y `alire.toml`
 
-**ES:** Misma estructura que `hello_world`, solo cambia el nombre del proyecto. Ver [`hello_world/Readme.md`](../hello_world/Readme.md) para la explicación detallada.
+**ES:** Misma estructura que `hello_world`, solo cambia el nombre del proyecto. Ver [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) para la explicación detallada.
 
-**EN:** Same structure as `hello_world`, only the project name changes. See [`hello_world/Readme.md`](../hello_world/Readme.md) for the detailed explanation.
+**EN:** Same structure as `hello_world`, only the project name changes. See [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) for the detailed explanation.
 
 ### `.gitignore` — ¿Por qué `config/`?
 
@@ -95,8 +95,8 @@ Hello, Ada!
 
 ---
 
-**ES:** Para más detalles sobre la toolchain y la estructura de proyectos manuales, ver [`hello_world/Readme.md`](../hello_world/Readme.md) y [`ada/Readme.md`](../../../Readme.md).  
-**EN:** For more details about the toolchain and manual project structure, see [`hello_world/Readme.md`](../hello_world/Readme.md) and [`ada/Readme.md`](../../../Readme.md).
+**ES:** Para más detalles sobre la toolchain y la estructura de proyectos manuales, ver [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) y [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/).  
+**EN:** For more details about the toolchain and manual project structure, see [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) and [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/).
 
 ---
 
@@ -116,4 +116,4 @@ hello_user/
 
 ---
 
-*🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages)*
+*🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages) · [GitHub Pages](https://yorche3.github.io/programming_languages/)*
