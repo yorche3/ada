@@ -1,0 +1,21 @@
+name = "tests"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Yorche"]
+maintainers = ["Yorche <hyaoki123@gmail.com>"]
+maintainers-logins = ["yorche3"]
+licenses = "Apache-2.0"
+website = ""
+tags = []
+
+executables = ["tests"]
+
+[[depends-on]]
+calculator = "*"
+
+[[pins]]
+calculator = { path='..' }
+
+[[depends-on]]
+aunit = "^26.0.0"

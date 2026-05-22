@@ -1,6 +1,6 @@
 # Hello, World! — Ada
 
-Implementación de la especificación [`01_Hello_World.md`](../../../../docs/core/foundations/01_Hello_World.md) en **Ada**, siguiendo un enfoque **manual y minimalista** (sin `alr init`).
+Implementación de la especificación [01_Hello_World](https://yorche3.github.io/programming_languages/core/foundations/01_Hello_World/) en **Ada**, siguiendo un enfoque **manual y minimalista** (sin `alr init`).
 
 ---
 
@@ -59,12 +59,18 @@ executables = ["hello_world"]
 ```gpr
 project Hello_World is
    for Languages use ("Ada");
+
+   package Builder is
+      for Switches ("Ada") use ("-s");  --  Recompile if source changes
+   end Builder;
    for Object_Dir use "obj";
+   for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
    for Main use ("hello_world.adb");
-   package Builder is
-      for Switches ("Ada") use ("-s");
-   end Builder;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
 end Hello_World;
 ```
 
@@ -112,8 +118,8 @@ gprbuild -p -P hello_world.gpr
 
 ---
 
-**ES:** La toolchain (Alire 2.1.0, gnat_native 15.2.1, gprbuild 25.0.1) se configura globalmente. Ver [`ada/Readme.md`](../../../Readme.md) para instrucciones de instalación.  
-**EN:** The toolchain (Alire 2.1.0, gnat_native 15.2.1, gprbuild 25.0.1) is configured globally. See [`ada/Readme.md`](../../../Readme.md) for installation instructions.
+**ES:** La toolchain (Alire 2.1.0, gnat_native 15.2.1, gprbuild 25.0.1) se configura globalmente. Ver [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/) para instrucciones de instalación.  
+**EN:** The toolchain (Alire 2.1.0, gnat_native 15.2.1, gprbuild 25.0.1) is configured globally. See [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/) for installation instructions.
 
 ---
 
@@ -132,4 +138,4 @@ hello_world/
 
 ---
 
-*🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages)*
+*🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages) · [GitHub Pages](https://yorche3.github.io/programming_languages/)*
