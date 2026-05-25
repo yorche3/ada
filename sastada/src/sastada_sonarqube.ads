@@ -24,4 +24,11 @@ package SastAda_SonarQube is
    --  Retorna un resumen textual de los hallazgos
    function Summary_Text (Findings : Finding_Vectors.Vector) return String;
 
+   --  Convierte un Rule_Type al valor 'type' de SonarQube
+   --  Security   → "VULNERABILITY"
+   --  Reliability → "BUG"
+   --  Maintainability → "CODE_SMELL"
+   --  Code_Style → "CODE_SMELL"
+   function Kind_To_SonarQube_Type (K : Rule_Type) return String;
+
 end SastAda_SonarQube;

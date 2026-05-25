@@ -1,6 +1,5 @@
 with Ada.Text_IO;                use Ada.Text_IO;
 with Ada.Strings.Fixed;          use Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;      use Ada.Strings.Unbounded;
 with Ada.Exceptions;             use Ada.Exceptions;
 
 with Libadalang.Analysis;        use Libadalang.Analysis;
@@ -18,7 +17,9 @@ package body SastAda_AST is
       Process : access procedure (N : Ada_Node'Class))
    is
    begin
-      if Node.Is_Null then return; end if;
+      if Node.Is_Null then
+         return;
+      end if;
       Process (Node);
       for I in 1 .. Children_Count (Node) loop
          Visit_Descendants (Child (Node, I), Process);
@@ -55,7 +56,8 @@ package body SastAda_AST is
                Message   => To_Unbounded_String
                  ("Infinite loop risk: no 'exit' statement found " &
                   "within the loop body."),
-               Severity  => CRITICAL));
+               Severity  => CRITICAL,
+               Kind      => Reliability));
       end if;
    exception
       when E : others =>
@@ -86,7 +88,8 @@ package body SastAda_AST is
                   Message   => To_Unbounded_String
                     ("Usage of 'Address attribute detected. " &
                      "Consider using access types instead."),
-                  Severity  => CRITICAL));
+                  Severity  => CRITICAL,
+                  Kind      => Security));
          end if;
       end if;
    end Check_Address_Attribute;
@@ -171,7 +174,8 @@ package body SastAda_AST is
                  ("Deep nesting detected (" &
                   Trim (Natural'Image (Max_Depth), Ada.Strings.Left) &
                   " levels). Maximum allowed is 4."),
-               Severity  => MAJOR));
+               Severity  => MAJOR,
+               Kind      => Maintainability));
       end if;
    exception
       when E : others =>
@@ -199,7 +203,8 @@ package body SastAda_AST is
                Message   => To_Unbounded_String
                  ("GOTO statement detected. " &
                   "Use structured control flow instead."),
-               Severity  => CRITICAL));
+               Severity  => CRITICAL,
+               Kind      => Code_Style));
       end if;
    end Check_Goto_Statement;
 
@@ -222,7 +227,8 @@ package body SastAda_AST is
                Column    => Natural (Sloc_Range (Node).Start_Column),
                Message   => To_Unbounded_String
                  ("Sentencia null estricta detectada."),
-               Severity  => MINOR));
+               Severity  => MINOR,
+               Kind      => Code_Style));
       end if;
    end Check_Null_Statement;
 
@@ -248,7 +254,8 @@ package body SastAda_AST is
                   Message   => To_Unbounded_String
                     ("Unchecked_Deallocation usage detected. " &
                      "Consider using controlled types."),
-                  Severity  => CRITICAL));
+                  Severity  => CRITICAL,
+                  Kind      => Security));
          end if;
          if Ada.Strings.Fixed.Index (Node_Image, "Unchecked_Conversion") > 0 then
             Findings.Append
@@ -260,7 +267,8 @@ package body SastAda_AST is
                   Message   => To_Unbounded_String
                     ("Unchecked_Conversion usage detected. " &
                      "Use safe type conversions instead."),
-                  Severity  => MAJOR));
+                  Severity  => MAJOR,
+                  Kind      => Reliability));
          end if;
       end if;
    end Check_Unchecked_With;
@@ -292,7 +300,8 @@ package body SastAda_AST is
                   Message   => To_Unbounded_String
                     ("Long identifier detected (exceeds 40 characters). " &
                      "Consider using shorter names."),
-                  Severity  => MINOR));
+                  Severity  => MINOR,
+                  Kind      => Maintainability));
          end if;
       end if;
    end Check_Long_Identifier;
@@ -332,7 +341,8 @@ package body SastAda_AST is
                      Message   => To_Unbounded_String
                        ("Subprogram has no exception handler. " &
                         "Consider adding 'exception' block for safety."),
-                     Severity  => MAJOR));
+                     Severity  => MAJOR,
+                     Kind      => Reliability));
             end if;
          end if;
       end Check_Subp;
@@ -369,7 +379,8 @@ package body SastAda_AST is
                     ("Function/procedure exceeds 100 lines (" &
                      Trim (Natural'Image (Len), Ada.Strings.Left) &
                      " lines). Consider refactoring."),
-                  Severity  => MAJOR));
+                  Severity  => MAJOR,
+                  Kind      => Maintainability));
          end if;
       end Check_Subp;
    begin
@@ -379,6 +390,121 @@ package body SastAda_AST is
          Put_Line ("    [AST] Error en Check_Function_Length: " &
                     Exception_Message (E));
    end Check_Function_Length;
+
+   ----------------------------------
+   -- Check_Uninitialized_Variable --
+   ----------------------------------
+
+   procedure Check_Uninitialized_Variable
+     (Root      : Ada_Node'Class;
+      File_Path : String;
+      Findings  : in out Finding_Vectors.Vector)
+   is
+      procedure Check_Decl (N : Ada_Node'Class) is
+         Node_Image : constant String := Image (N);
+      begin
+         if N.Kind = Ada_Object_Decl then
+            --  Verificar si NO contiene ":=" en su representación
+            --  (variable sin inicialización)
+            if Ada.Strings.Fixed.Index (Node_Image, ":=") = 0 then
+               Findings.Append
+                 (Finding_Record'
+                    (Rule_Id   => To_Unbounded_String ("SAST-013"),
+                     File_Path => To_Unbounded_String (File_Path),
+                     Line      => Natural (Sloc_Range (N).Start_Line),
+                     Column    => Natural (Sloc_Range (N).Start_Column),
+                     Message   => To_Unbounded_String
+                       ("Variable declared without initialization. " &
+                        "Always initialize variables to avoid " &
+                        "indeterminate values."),
+                     Severity  => MAJOR,
+                     Kind      => Reliability));
+            end if;
+         end if;
+      end Check_Decl;
+   begin
+      Visit_Descendants (Root, Check_Decl'Access);
+   exception
+      when E : others =>
+         Put_Line ("    [AST] Error en Check_Uninitialized_Variable: " &
+                    Exception_Message (E));
+   end Check_Uninitialized_Variable;
+
+   -------------------------------------
+   -- Check_Unvalidated_System_APIs --
+   -------------------------------------
+
+   procedure Check_Unvalidated_System_APIs
+     (Root      : Ada_Node'Class;
+      File_Path : String;
+      Findings  : in out Finding_Vectors.Vector)
+   is
+      procedure Check_With (N : Ada_Node'Class) is
+         Node_Image : constant String := Image (N);
+      begin
+         if N.Kind = Ada_With_Clause then
+            --  Ada.Command_Line sin validación de Argument_Count
+            if Ada.Strings.Fixed.Index (Node_Image,
+              "Ada.Command_Line") > 0
+            then
+               Findings.Append
+                 (Finding_Record'
+                    (Rule_Id   => To_Unbounded_String ("SAST-014"),
+                     File_Path => To_Unbounded_String (File_Path),
+                     Line      => Natural (Sloc_Range (N).Start_Line),
+                     Column    => Natural (Sloc_Range (N).Start_Column),
+                     Message   => To_Unbounded_String
+                       ("Usage of Ada.Command_Line detected. " &
+                        "Always validate Argument_Count before " &
+                        "accessing arguments."),
+                     Severity  => CRITICAL,
+                     Kind      => Security));
+            end if;
+
+            --  Ada.Directories sin verificación de existencia
+            if Ada.Strings.Fixed.Index (Node_Image,
+              "Ada.Directories") > 0
+            then
+               Findings.Append
+                 (Finding_Record'
+                    (Rule_Id   => To_Unbounded_String ("SAST-014"),
+                     File_Path => To_Unbounded_String (File_Path),
+                     Line      => Natural (Sloc_Range (N).Start_Line),
+                     Column    => Natural (Sloc_Range (N).Start_Column),
+                     Message   => To_Unbounded_String
+                       ("Usage of Ada.Directories detected. " &
+                        "Always check Exists() before operating " &
+                        "on files/directories."),
+                     Severity  => CRITICAL,
+                     Kind      => Security));
+            end if;
+
+            --  Ada.Environment_Variables sin verificación de existencia
+            if Ada.Strings.Fixed.Index (Node_Image,
+              "Ada.Environment_Variables") > 0
+            then
+               Findings.Append
+                 (Finding_Record'
+                    (Rule_Id   => To_Unbounded_String ("SAST-014"),
+                     File_Path => To_Unbounded_String (File_Path),
+                     Line      => Natural (Sloc_Range (N).Start_Line),
+                     Column    => Natural (Sloc_Range (N).Start_Column),
+                     Message   => To_Unbounded_String
+                       ("Usage of Ada.Environment_Variables detected. " &
+                        "Always check that a variable exists with " &
+                        "Exists() before calling Value()."),
+                     Severity  => CRITICAL,
+                     Kind      => Security));
+            end if;
+         end if;
+      end Check_With;
+   begin
+      Visit_Descendants (Root, Check_With'Access);
+   exception
+      when E : others =>
+         Put_Line ("    [AST] Error en Check_Unvalidated_System_APIs: " &
+                    Exception_Message (E));
+   end Check_Unvalidated_System_APIs;
 
    ----------------------
    -- Analyze_File_AST --
@@ -469,7 +595,8 @@ package body SastAda_AST is
                Message   => To_Unbounded_String
                  ("Library-level package should be Pure or Preelaborate " &
                   "when possible to improve safety."),
-               Severity  => MINOR));
+               Severity  => MINOR,
+               Kind      => Code_Style));
       end if;
 
       --  SAST-010: Exception handling
@@ -477,6 +604,12 @@ package body SastAda_AST is
 
       --  SAST-004: Función/procedure demasiado larga
       Check_Function_Length (Root, File_Path, Findings);
+
+      --  SAST-013: Variables no inicializadas
+      Check_Uninitialized_Variable (Root, File_Path, Findings);
+
+      --  SAST-014: Llamadas a sistema sin validación
+      Check_Unvalidated_System_APIs (Root, File_Path, Findings);
 
    exception
       when E : others =>

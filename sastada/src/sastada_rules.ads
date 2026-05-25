@@ -30,6 +30,7 @@ package SastAda_Rules is
       Column      : Natural;
       Message     : Unbounded_String;
       Severity    : Rule_Severity;
+      Kind        : Rule_Type := Code_Style;
    end record;
 
    package Finding_Vectors is new Ada.Containers.Vectors
