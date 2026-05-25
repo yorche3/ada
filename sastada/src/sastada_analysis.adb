@@ -202,22 +202,21 @@ package body SastAda_Analysis is
                Put_Line ("  Analizando: " & File_Path);
 
             if AST_Available then
-               --  Intentar con AST (Libadalang)
+               --  AST: cubre todas las reglas SAST-001 a SAST-014
                Analyze_File_AST (File_Path, Findings);
+            else
+               --  Fallback textual solo cuando no hay Libadalang
+               declare
+                  File_Content : constant String :=
+                    Read_File_Content (File_Path);
+               begin
+                  if File_Content'Length > 0 then
+                     Check_Security_Rules (File_Content, File_Path, Findings);
+                  else
+                     Put_Line ("    Omitiendo (vacío): " & File_Path);
+                  end if;
+               end;
             end if;
-
-            --  Complementar con pattern matching (para reglas que
-            --  el AST no cubre o como respaldo)
-            declare
-               File_Content : constant String :=
-                 Read_File_Content (File_Path);
-            begin
-               if File_Content'Length > 0 then
-                  Check_Security_Rules (File_Content, File_Path, Findings);
-               else
-                  Put_Line ("    Omitiendo (vacío): " & File_Path);
-               end if;
-            end;
          end;
       end loop;
 
@@ -238,12 +237,37 @@ package body SastAda_Analysis is
    is
       Line_Num : Natural := 0;
       Start    : Positive := Lines'First;
+      Found_Cmd_Line  : Boolean := False;
+      Found_Dirs      : Boolean := False;
+      Found_Env_Vars  : Boolean := False;
+
+      --  Verifica si una palabra está dentro de un string literal en la línea
+      function Is_In_String (Line : String; Pos : Positive) return Boolean is
+         In_Str : Boolean := False;
+      begin
+         for J in Line'First .. Pos loop
+            if Line (J) = '"' then
+               In_Str := not In_Str;
+            end if;
+         end loop;
+         return In_Str;
+      end Is_In_String;
+
+      --  Verifica si una línea es comentario o está en comentario
+      function Is_Comment (Line : String; Pos : Positive) return Boolean is
+      begin
+         for J in Line'First .. Pos loop
+            if J < Line'Last and then Line (J) = '-' and then Line (J + 1) = '-' then
+               return True;
+            end if;
+         end loop;
+         return False;
+      end Is_Comment;
    begin
       for I in Lines'Range loop
          if Lines (I) = ASCII.LF then
             Line_Num := Line_Num + 1;
 
-            --  SAST-008: Credenciales hardcodeadas en la línea actual
             declare
                Line_Content : constant String :=
                  Lines (Start .. I - 1);
@@ -252,25 +276,129 @@ package body SastAda_Analysis is
                for J in Line_Content'Range loop
                   Upper_Line (J) := To_Upper (Line_Content (J));
                end loop;
-               if Ada.Strings.Fixed.Index (Upper_Line, "PASSWORD") > 0 or else
-                 Ada.Strings.Fixed.Index (Upper_Line, "SECRET") > 0 or else
-                 Ada.Strings.Fixed.Index (Upper_Line, "API_KEY") > 0
-               then
-                  Findings.Append
-                    (Finding_Record'
-                       (Rule_Id  => To_Unbounded_String ("SAST-008"),
-                        File_Path => To_Unbounded_String (File_Name),
-                        Line     => Line_Num,
-                        Column   => 1,
-                        Message  => To_Unbounded_String
-                          ("Possible hardcoded credential detected. " &
-                           "Use environment variables instead."),
-                        Severity => BLOCKER));
+
+               --  SAST-008: Credenciales hardcodeadas
+               --  Solo si NO está en string literal ni en comentario
+               declare
+                  Pwd_Pos  : constant Natural :=
+                    Ada.Strings.Fixed.Index (Upper_Line, "PASSWORD");
+                  Sec_Pos  : constant Natural :=
+                    Ada.Strings.Fixed.Index (Upper_Line, "SECRET");
+                  Api_Pos  : constant Natural :=
+                    Ada.Strings.Fixed.Index (Upper_Line, "API_KEY");
+               begin
+                  if Pwd_Pos > 0 and then
+                    not Is_In_String (Line_Content, Pwd_Pos) and then
+                    not Is_Comment (Line_Content, Pwd_Pos)
+                  then
+                     Findings.Append
+                       (Finding_Record'
+                          (Rule_Id  => To_Unbounded_String ("SAST-008"),
+                           File_Path => To_Unbounded_String (File_Name),
+                           Line     => Line_Num,
+                           Column   => Pwd_Pos,
+                           Message  => To_Unbounded_String
+                             ("Possible hardcoded credential detected. " &
+                              "Use environment variables instead."),
+                           Severity => BLOCKER,
+                           Kind     => Security));
+                  end if;
+
+                  if Sec_Pos > 0 and then
+                    not Is_In_String (Line_Content, Sec_Pos) and then
+                    not Is_Comment (Line_Content, Sec_Pos)
+                  then
+                     Findings.Append
+                       (Finding_Record'
+                          (Rule_Id  => To_Unbounded_String ("SAST-008"),
+                           File_Path => To_Unbounded_String (File_Name),
+                           Line     => Line_Num,
+                           Column   => Sec_Pos,
+                           Message  => To_Unbounded_String
+                             ("Possible hardcoded credential detected. " &
+                              "Use environment variables instead."),
+                           Severity => BLOCKER,
+                           Kind     => Security));
+                  end if;
+
+                  if Api_Pos > 0 and then
+                    not Is_In_String (Line_Content, Api_Pos) and then
+                    not Is_Comment (Line_Content, Api_Pos)
+                  then
+                     Findings.Append
+                       (Finding_Record'
+                          (Rule_Id  => To_Unbounded_String ("SAST-008"),
+                           File_Path => To_Unbounded_String (File_Name),
+                           Line     => Line_Num,
+                           Column   => Api_Pos,
+                           Message  => To_Unbounded_String
+                             ("Possible hardcoded credential detected. " &
+                              "Use environment variables instead."),
+                           Severity => BLOCKER,
+                           Kind     => Security));
+                  end if;
+               end;
+
+               --  SAST-014: Detectar with's de paquetes de sistema
+               if Ada.Strings.Fixed.Index (Line_Content, "with Ada.Command_Line;") > 0 then
+                  Found_Cmd_Line := True;
+               end if;
+               if Ada.Strings.Fixed.Index (Line_Content, "with Ada.Directories;") > 0 then
+                  Found_Dirs := True;
+               end if;
+               if Ada.Strings.Fixed.Index (Line_Content, "with Ada.Environment_Variables;") > 0 then
+                  Found_Env_Vars := True;
                end if;
             end;
             Start := I + 1;
          end if;
       end loop;
+
+      --  SAST-014: Reportar hallazgos al final (una vez por archivo)
+      if Found_Cmd_Line then
+         Findings.Append
+           (Finding_Record'
+              (Rule_Id   => To_Unbounded_String ("SAST-014"),
+               File_Path => To_Unbounded_String (File_Name),
+               Line      => 1,
+               Column    => 1,
+               Message   => To_Unbounded_String
+                 ("Usage of Ada.Command_Line detected. " &
+                  "Always validate Argument_Count before " &
+                  "accessing arguments."),
+               Severity  => CRITICAL,
+               Kind      => Security));
+      end if;
+
+      if Found_Dirs then
+         Findings.Append
+           (Finding_Record'
+              (Rule_Id   => To_Unbounded_String ("SAST-014"),
+               File_Path => To_Unbounded_String (File_Name),
+               Line      => 1,
+               Column    => 1,
+               Message   => To_Unbounded_String
+                 ("Usage of Ada.Directories detected. " &
+                  "Always check Exists() before operating " &
+                  "on files/directories."),
+               Severity  => CRITICAL,
+               Kind      => Security));
+      end if;
+
+      if Found_Env_Vars then
+         Findings.Append
+           (Finding_Record'
+              (Rule_Id   => To_Unbounded_String ("SAST-014"),
+               File_Path => To_Unbounded_String (File_Name),
+               Line      => 1,
+               Column    => 1,
+               Message   => To_Unbounded_String
+                 ("Usage of Ada.Environment_Variables detected. " &
+                  "Always check that a variable exists with " &
+                  "Exists() before calling Value()."),
+               Severity  => CRITICAL,
+               Kind      => Security));
+      end if;
    end Check_Security_Rules;
 
 end SastAda_Analysis;

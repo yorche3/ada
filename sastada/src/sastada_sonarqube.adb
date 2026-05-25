@@ -46,7 +46,9 @@ package body SastAda_SonarQube is
          Append (Result, """,");
          Append (Result, ASCII.LF);
 
-         Append (Result, "      ""type"": ""CODE_SMELL"",");
+         Append (Result, "      ""type"": """);
+         Append (Result, Kind_To_SonarQube_Type (F.Kind));
+         Append (Result, """,");
          Append (Result, ASCII.LF);
 
          Append (Result, "      ""primaryLocation"": {");
@@ -209,5 +211,19 @@ package body SastAda_SonarQube is
 
       return To_String (Result);
    end Summary_Text;
+
+   --------------------------
+   -- Kind_To_SonarQube_Type --
+   --------------------------
+
+   function Kind_To_SonarQube_Type (K : Rule_Type) return String is
+   begin
+      case K is
+         when Security       => return "VULNERABILITY";
+         when Reliability   => return "BUG";
+         when Maintainability => return "CODE_SMELL";
+         when Code_Style    => return "CODE_SMELL";
+      end case;
+   end Kind_To_SonarQube_Type;
 
 end SastAda_SonarQube;

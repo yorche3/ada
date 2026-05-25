@@ -165,6 +165,33 @@ package body SastAda_Rules is
             Kind        => Code_Style,
             Active      => True));
 
+      --  Regla SAST-013: Variable no inicializada
+      Rules.Append
+        (Rule_Record'
+           (Id          => To_Unbounded_String ("SAST-013"),
+            Name        => To_Unbounded_String ("Uninitialized Variable"),
+            Description =>
+              To_Unbounded_String
+                ("Variable declared without initialization may contain " &
+                 "indeterminate value. Always initialize variables."),
+            Severity    => MAJOR,
+            Kind        => Reliability,
+            Active      => True));
+
+      --  Regla SAST-014: Llamada a sistema sin validación
+      Rules.Append
+        (Rule_Record'
+           (Id          => To_Unbounded_String ("SAST-014"),
+            Name        => To_Unbounded_String ("Unvalidated System Call"),
+            Description =>
+              To_Unbounded_String
+                ("Usage of system-level packages (Command_Line, Directories, " &
+                 "Environment_Variables) without prior validation. " &
+                 "Always check preconditions before calling system APIs."),
+            Severity    => CRITICAL,
+            Kind        => Security,
+            Active      => True));
+
       return Rules;
    end Get_Active_Rules;
 
