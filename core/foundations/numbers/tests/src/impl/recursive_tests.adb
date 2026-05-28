@@ -21,12 +21,14 @@ package body Recursive_Tests is
 
    procedure Test_Fibonacci_Rec (Self : in out Test) is
       N1 : Integer := 0;
-      N2 : Integer := 6;
+      N2 : Integer := 1;
+      N3 : Integer := 6;
    begin
       Assert (Fibonacci_Rec (N1) = 0, "Fibonacci of 0 should be 0");
-      Assert (Fibonacci_Rec (N2) = 8, "Fibonacci of 6 should be 8");
+      Assert (Fibonacci_Rec (N2) = 1, "Fibonacci of 1 should be 1");
+      Assert (Fibonacci_Rec (N3) = 8, "Fibonacci of 6 should be 8");
    end Test_Fibonacci_Rec;
-   
+
    procedure Test_Greatest_Common_Divisor_Rec (Self : in out Test) is
       A1 : Integer := 12;
       B1 : Integer := 8;
@@ -47,4 +49,3 @@ package body Recursive_Tests is
       Assert (Least_Common_Multiple_Rec (A2, B2) = 24, "LCM of 6 and 8 should be 24");
    end Test_Least_Common_Multiple_Rec;
 end Recursive_Tests;
-

@@ -52,59 +52,59 @@ package body Numbers is
 
    function Sum_Of_First_N_Acc (N : Natural) return Natural is
    begin
-      return Sum_Of_First_N_Rec_Help (N, 0);
+      return Sum_Of_First_N_Acc_Help (N, 0);
    end Sum_Of_First_N_Acc;
 
-   function Sum_Of_First_N_Rec_Help (N : Natural; Acc : Natural) return Natural is
+   function Sum_Of_First_N_Acc_Help (N : Natural; Acc : Natural) return Natural is
    begin
       if N = 0 then
          return Acc;
       else
-         return Sum_Of_First_N_Rec_Help (N - 1, Acc + N);
+         return Sum_Of_First_N_Acc_Help (N - 1, Acc + N);
       end if;
-   end Sum_Of_First_N_Rec_Help;
+   end Sum_Of_First_N_Acc_Help;
 
    function Factorial_Acc (N : Natural) return Natural is
    begin
-      return Factorial_Rec_Help (N, 1);
+      return Factorial_Acc_Help (N, 1);
    end Factorial_Acc;
 
-   function Factorial_Rec_Help (N : Natural; Acc : Natural) return Natural is
+   function Factorial_Acc_Help (N : Natural; Acc : Natural) return Natural is
    begin
       if N = 0 then
          return Acc;
       else
-         return Factorial_Rec_Help (N - 1, Acc * N);
+         return Factorial_Acc_Help (N - 1, Acc * N);
       end if;
-   end Factorial_Rec_Help;
+   end Factorial_Acc_Help;
 
    function Fibonacci_Acc (N : Natural) return Natural is
    begin
-      return Fibonacci_Rec_Help (N, 0, 1);
+      return Fibonacci_Acc_Help (N, 0, 1);
    end Fibonacci_Acc;
 
-   function Fibonacci_Rec_Help (N : Natural; Acc1 : Natural; Acc2 : Natural) return Natural is
+   function Fibonacci_Acc_Help (N : Natural; Acc1 : Natural; Acc2 : Natural) return Natural is
    begin
       if N = 0 then
          return Acc1;
       else
-         return Fibonacci_Rec_Help (N - 1, Acc2, Acc1 + Acc2);
+         return Fibonacci_Acc_Help (N - 1, Acc2, Acc1 + Acc2);
       end if;
-   end Fibonacci_Rec_Help;
+   end Fibonacci_Acc_Help;
 
    function Greatest_Common_Divisor_Acc (A, B : Natural) return Natural is
    begin
-      return Greatest_Common_Divisor_Rec_Help (A, B);
+      return Greatest_Common_Divisor_Acc_Help (A, B);
    end Greatest_Common_Divisor_Acc;
 
-   function Greatest_Common_Divisor_Rec_Help (A, B : Natural) return Natural is
+   function Greatest_Common_Divisor_Acc_Help (A, B : Natural) return Natural is
    begin
       if B = 0 then
          return A;
       else
-         return Greatest_Common_Divisor_Rec_Help (B, A mod B);
+         return Greatest_Common_Divisor_Acc_Help (B, A mod B);
       end if;
-   end Greatest_Common_Divisor_Rec_Help;
+   end Greatest_Common_Divisor_Acc_Help;
 
    function Least_Common_Multiple_Acc (A, B : Natural) return Natural is
    begin
@@ -139,6 +139,9 @@ package body Numbers is
       Result : Natural := 0;
       I : Natural := 2;
    begin
+      if N <= 1 then
+         return N;
+      end if;
       while I <= N loop
          Result := Acc1 + Acc2;
          Acc1 := Acc2;

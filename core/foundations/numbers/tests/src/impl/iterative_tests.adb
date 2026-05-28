@@ -21,10 +21,12 @@ package body Iterative_Tests is
 
    procedure Test_Fibonacci_Iter (Self : in out Test) is
       N1 : constant Natural := 0;
-      N2 : constant Natural := 6;
+      N2 : constant Natural := 1;
+      N3 : constant Natural := 6;
    begin
       Assert (Fibonacci_Iter (N1) = 0, "Fibonacci of 0 should be 0");
-      Assert (Fibonacci_Iter (N2) = 8, "Fibonacci of 6 should be 8");
+      Assert (Fibonacci_Iter (N2) = 1, "Fibonacci of 1 should be 1");
+      Assert (Fibonacci_Iter (N3) = 8, "Fibonacci of 6 should be 8");
    end Test_Fibonacci_Iter;
 
    procedure Test_Greatest_Common_Divisor_Iter (Self : in out Test) is
