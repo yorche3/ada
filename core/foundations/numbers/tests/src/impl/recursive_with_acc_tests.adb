@@ -21,10 +21,12 @@ package body Recursive_With_Acc_Tests is
 
    procedure Test_Fibonacci_Acc (Self : in out Test) is
       N1 : constant integer := 0;
-      N2 : constant integer := 6;
+      N2 : constant integer := 1;
+      N3 : constant integer := 6;
    begin
       Assert(Fibonacci_Acc (N1) = 0, "Fibonacci of 0 should be 0");
-      Assert(Fibonacci_Acc (N2) = 8, "Fibonacci of 6 should be 8");
+      Assert(Fibonacci_Acc (N2) = 1, "Fibonacci of 1 should be 1");
+      Assert(Fibonacci_Acc (N3) = 8, "Fibonacci of 6 should be 8");
    end Test_Fibonacci_Acc;
 
    procedure Test_Greatest_Common_Divisor_Acc (Self : in out Test) is
