@@ -2,6 +2,7 @@
 
 with Ada.Text_IO;                 use Ada.Text_IO;
 with Ada.Directories;             use Ada.Directories;
+with Ada.Calendar;                use Ada.Calendar;
 with Ada.Strings.Fixed;           use Ada.Strings.Fixed;
 
 package body SastAda_Utils is
@@ -13,17 +14,18 @@ package body SastAda_Utils is
    function Read_File_Content (Path : String) return String is
       F      : File_Type;
       Result : Unbounded_String;
-      Line   : String (1 .. 4096);
-      Last   : Natural;
    begin
       if not File_Exists (Path) then
          return "";
       end if;
       Open (F, In_File, Path);
       while not End_Of_File (F) loop
-         Get_Line (F, Line, Last);
-         Append (Result, Line (1 .. Last));
-         Append (Result, ASCII.LF);
+         declare
+            Line : constant String := Get_Line (F);
+         begin
+            Append (Result, Line);
+            Append (Result, ASCII.LF);
+         end;
       end loop;
       Close (F);
       return To_String (Result);
@@ -65,12 +67,20 @@ package body SastAda_Utils is
       if not File_Exists (Path) then
          return "0";
       end if;
-      --  Usamos el tamaño del archivo como hash/timestamp
+      --  Usamos Modification_Time para detectar cambios reales
       declare
-         File_Sz : File_Size;
+         Mod_Time : constant Ada.Calendar.Time :=
+           Modification_Time (Path);
+         Year     : Year_Number;
+         Month    : Month_Number;
+         Day      : Day_Number;
+         Seconds  : Day_Duration;
       begin
-         File_Sz := Size (Path);
-         return Trim (File_Size'Image (File_Sz), Ada.Strings.Left);
+         Split (Mod_Time, Year, Month, Day, Seconds);
+         return Trim (Year_Number'Image (Year), Ada.Strings.Left) &
+                "/" & Trim (Month_Number'Image (Month), Ada.Strings.Left) &
+                "/" & Trim (Day_Number'Image (Day), Ada.Strings.Left) &
+                " " & Trim (Duration'Image (Seconds), Ada.Strings.Left);
       end;
    end Get_File_Timestamp;
 
@@ -148,14 +158,19 @@ package body SastAda_Utils is
    --------------------------
 
    function Should_Skip_Dir (Dir_Path : String) return Boolean is
+      Last_Sep : constant Natural :=
+        Ada.Strings.Fixed.Index (Dir_Path, "/", Ada.Strings.Backward);
+      Dir_Name : constant String :=
+        (if Last_Sep > 0 then Dir_Path (Last_Sep + 1 .. Dir_Path'Last)
+         else Dir_Path);
    begin
-      return Ada.Strings.Fixed.Index (Dir_Path, "/.git") > 0 or else
-        Ada.Strings.Fixed.Index (Dir_Path, "/obj") > 0 or else
-        Ada.Strings.Fixed.Index (Dir_Path, "/bin") > 0 or else
-        Ada.Strings.Fixed.Index (Dir_Path, "/.alire") > 0 or else
-        Ada.Strings.Fixed.Index (Dir_Path, "/config") > 0 or else
-        Ada.Strings.Fixed.Index (Dir_Path, "/alire") > 0 or else
-        Ada.Strings.Fixed.Index (Dir_Path, "/build") > 0;
+      return Dir_Name = ".git" or else
+        Dir_Name = "obj" or else
+        Dir_Name = "bin" or else
+        Dir_Name = ".alire" or else
+        Dir_Name = "config" or else
+        Dir_Name = "alire" or else
+        Dir_Name = "build";
    end Should_Skip_Dir;
 
    --------------------------
@@ -167,7 +182,7 @@ package body SastAda_Utils is
       Search : Search_Type;
       DirEnt : Directory_Entry_Type;
    begin
-      Start_Search (Search, Dir_Path, "");
+      Start_Search (Search, Dir_Path, "*");
       while More_Entries (Search) loop
          Get_Next_Entry (Search, DirEnt);
          declare
@@ -206,7 +221,7 @@ package body SastAda_Utils is
       if not Exists (Dir) or else Kind (Dir) /= Directory then
          return;
       end if;
-      Start_Search (Search, Dir, "");
+      Start_Search (Search, Dir, "*");
       while More_Entries (Search) loop
          Get_Next_Entry (Search, DirEnt);
          declare
@@ -244,40 +259,17 @@ package body SastAda_Utils is
    ---------------------------
 
    function Make_Path_Relative (Full_Path : String; Base_Dir : String) return String is
-      Norm_Full : String := Full_Path;
-      Norm_Base : String := Base_Dir;
-      Start     : Positive;
    begin
-      --  Asegurar que Base_Dir termina en /
-      declare
-         Adj_Base : String (1 .. Norm_Base'Length + 1);
-      begin
-         if Norm_Base (Norm_Base'Last) = '/' then
-            Adj_Base (1 .. Norm_Base'Length) := Norm_Base;
-            Start := Norm_Base'First;
-         else
-            Adj_Base (1 .. Norm_Base'Length) := Norm_Base;
-            Adj_Base (Adj_Base'Last) := '/';
-            Start := Norm_Base'First;
-         end if;
+      --  Verificar que Full_Path comienza con Base_Dir
+      if Full_Path'Length > Base_Dir'Length
+        and then Full_Path (Full_Path'First .. Full_Path'First + Base_Dir'Length - 1) = Base_Dir
+        and then Full_Path (Full_Path'First + Base_Dir'Length) = '/'
+      then
+         --  Retornar la parte después de Base_Dir + '/'
+         return Full_Path (Full_Path'First + Base_Dir'Length + 1 .. Full_Path'Last);
+      end if;
 
-         --  Buscamos Base_Dir dentro de Full_Path
-         declare
-            Pos : constant Natural := Ada.Strings.Fixed.Index (Full_Path, Adj_Base (1 .. Adj_Base'Length));
-         begin
-            if Pos > 0 then
-               --  Retornamos la parte del path después de Base_Dir
-               declare
-                  Rel : constant String :=
-                    Full_Path (Pos + Adj_Base'Length .. Full_Path'Last);
-               begin
-                  return Rel;
-               end;
-            end if;
-         end;
-      end;
-
-      --  Si no se encuentra Base_Dir, retornamos la ruta completa
+      --  Si no coincide al inicio, retornamos la ruta completa
       return Full_Path;
    end Make_Path_Relative;
 

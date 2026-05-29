@@ -4,6 +4,7 @@
 
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with SastAda_Rules;          use SastAda_Rules;
+with Langkit_Support.Text;   use Langkit_Support.Text;
 
 package SastAda_AST is
 
@@ -18,5 +19,7 @@ package SastAda_AST is
 
    --  Versión del motor AST
    function AST_Engine_Version return String;
+
+   function Ada_Text_To_String (T : Text_Type) return String;
 
 end SastAda_AST;
