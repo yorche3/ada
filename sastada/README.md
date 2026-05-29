@@ -1,7 +1,11 @@
 # 🔍 SastAda — SAST for Ada
 
-**Static Application Security Testing** tool for Ada source code.  
-Scans `.ads`/`.adb` files, applies quality and security rules, and generates **SonarQube-compatible** JSON reports.
+[![License](https://img.shields.io/badge/Licencia-MIT-yellow.svg)](LICENSE)
+[![Alire](https://img.shields.io/badge/alire-2.1.0-blue)](https://alire.ada.dev)
+[![Libadalang](https://img.shields.io/badge/Libadalang-%E2%89%A526.0.0-blue)](https://github.com/AdaCore/libadalang)
+
+**Static Application Security Testing** para código fuente Ada.  
+Escanea archivos `.ads`/`.adb`, aplica reglas de calidad y seguridad, y genera reportes **JSON compatibles con SonarQube**.
 
 ---
 
@@ -87,6 +91,19 @@ alr run sastada -- --src-dir=.
 | `--suppress=<rule>[:file]` | Suprime una regla (opcionalmente solo para un archivo) |
 | `--help` | Muestra ayuda |
 
+### Integrar con SonarQube
+
+Una vez generado el reporte, impórtalo en SonarQube:
+
+```bash
+sonar-scanner \
+  -Dsonar.externalIssuesReportPaths=sastada_report.json \
+  -Dsonar.projectKey=mi-proyecto-ada \
+  -Dsonar.sources=.
+```
+
+SastAda genera el JSON en el formato **SonarQube Generic Issue Data** — no necesita transformación extra.
+
 ---
 
 ## 🧪 Reglas / Rules
@@ -107,6 +124,10 @@ alr run sastada -- --src-dir=.
 | SAST-012 | `Strictly Null Statement` | MINOR | Code Style | `null;` sin contexto |
 | SAST-013 | `Uninitialized Variable` | MAJOR | Reliability | Variable sin inicialización |
 | SAST-014 | `Unvalidated System Call` | CRITICAL | Security | Uso de `Command_Line`, `Directories`, `Environment_Variables` sin validación previa |
+
+> **Nota:** SAST-008 funciona con pattern matching (fallback textual) incluso sin Libadalang. Las demás reglas usan el motor AST.
+>
+> Documentación detallada de cada regla con ejemplos: [`docs/RULES.md`](docs/RULES.md).
 
 ---
 
