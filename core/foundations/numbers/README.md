@@ -78,6 +78,10 @@ Failed      :  0
 | `Greatest_Common_Divisor` | ✅ | ✅ | ✅ |
 | `Least_Common_Multiple` | ✅ | ✅ | ✅ |
 
+### 🌐 Otras implementaciones / Other implementations
+
+Este proyecto también está implementado en otros lenguajes. Explora el [repositorio principal](https://github.com/yorche3/programming_languages) para ver todas las versiones.
+
 ---
 
 *🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages) · [GitHub Pages](https://yorche3.github.io/programming_languages/)*

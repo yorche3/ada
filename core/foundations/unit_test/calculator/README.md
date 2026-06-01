@@ -141,6 +141,10 @@ calculator/                       # Biblioteca / Library (alr init --lib)
 | `Division(A, B)` | Resta repetitiva: cuántas veces cabe `B` en `A` / Repeated subtraction |
 | `Modulus(A, B)` | `A - (Division(A, B) * B)` usando `Multiplication` y `Subtraction` |
 
+### 🌐 Otras implementaciones / Other implementations
+
+Este proyecto también está implementado en otros lenguajes. Explora el [repositorio principal](https://github.com/yorche3/programming_languages) para ver todas las versiones.
+
 ---
 
 *🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages) · [GitHub Pages](https://yorche3.github.io/programming_languages/)*

@@ -23,6 +23,10 @@
 👉 Empieza en [`foundations/`](foundations/) — módulo [`hello_world`](foundations/hello_world/).  
 👉 Start at [`foundations/`](foundations/) — module [`hello_world`](foundations/hello_world/).
 
+### 🌐 Otras implementaciones / Other implementations
+
+Este proyecto también está implementado en otros lenguajes. Explora el [repositorio principal](https://github.com/yorche3/programming_languages) para ver todas las versiones.
+
 ---
 
 *[← Volver a Ada](../Readme.md)*
