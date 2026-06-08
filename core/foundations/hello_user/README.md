@@ -4,7 +4,7 @@ Implementación de la especificación [02_Hello_User](https://yorche3.github.io/
 
 ---
 
-## 📂 Archivos / Files
+## 📂 Archivos y estructura / Files & Structure
 
 | Archivo | Propósito |
 |---------|-----------|
@@ -12,11 +12,32 @@ Implementación de la especificación [02_Hello_User](https://yorche3.github.io/
 | [`hello_user.gpr`](hello_user.gpr) | Proyecto GPRbuild (misma estructura que `hello_world`). |
 | [`alire.toml`](alire.toml) | Manifiesto Alire con ejecutable `hello_user`. |
 | [`.gitignore`](.gitignore) | Ignora `alire/`, `bin/`, `obj/` y `config/`. |
-| [`Readme.md`](Readme.md) | Este archivo. |
+
+**Estructura de directorios esperada:**
+
+```text
+hello_user/
+├── hello_user.adb    # Código fuente
+├── hello_user.gpr    # Proyecto GPRbuild
+├── alire.toml         # Manifiesto Alire
+├── .gitignore         # Ignora alire/, bin/, config/, obj/
+├── bin/               # Ejecutable (generado)
+├── obj/               # Objetos (generado)
+├── config/            # Configuración auto-generada por `alr run`
+└── alire/             # Dependencias (generado)
+```
 
 ---
 
-## 📄 Archivos clave / Key Files
+## 🛠️ Enfoque y construcción / Approach & Build
+
+**ES:** Este proyecto fue creado **manualmente**, sin usar `alr init`. Sigue la misma estructura que [`hello_world`](../hello_world/), solo cambian los nombres de archivo y el contenido del código fuente.
+
+**EN:** This project was created **manually**, without using `alr init`. It follows the same structure as [`hello_world`](../hello_world/), only the file names and source code content change.
+
+---
+
+## 📄 Archivos de configuración clave / Key Configuration Files
 
 ### `hello_user.adb` — Código fuente
 
@@ -49,15 +70,15 @@ end Hello_User;
 
 ### `hello_user.gpr` y `alire.toml`
 
-**ES:** Misma estructura que `hello_world`, solo cambia el nombre del proyecto. Ver [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) para la explicación detallada.
+**ES:** Misma estructura que `hello_world`, solo cambia el nombre del proyecto. Ver [`hello_world/README.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) para la explicación detallada.
 
-**EN:** Same structure as `hello_world`, only the project name changes. See [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) for the detailed explanation.
+**EN:** Same structure as `hello_world`, only the project name changes. See [`hello_world/README.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) for the detailed explanation.
 
 ### `.gitignore` — ¿Por qué `config/`?
 
-**ES:** Al usar `alr run` (comando sugerido por Alire para ejecutar el proyecto), la herramienta genera automáticamente un directorio `config/` con un archivo de configuración del proyecto (`*_Config.gpr`). Este archivo es **auto-generado** según la toolchain y el entorno local, por lo que no debe versionarse.
+**ES:** Al usar `alr run`, la herramienta genera automáticamente un directorio `config/` con un archivo de configuración del proyecto (`*_Config.gpr`). Este archivo es **auto-generado** según la toolchain y el entorno local, por lo que no debe versionarse.
 
-**EN:** When using `alr run` (the command suggested by Alire to run the project), the tool automatically generates a `config/` directory with a project configuration file (`*_Config.gpr`). This file is **auto-generated** based on the toolchain and local environment, so it must not be versioned.
+**EN:** When using `alr run`, the tool automatically generates a `config/` directory with a project configuration file (`*_Config.gpr`). This file is **auto-generated** based on the toolchain and local environment, so it must not be versioned.
 
 ```gitignore
 alire/
@@ -68,7 +89,7 @@ obj/
 
 ---
 
-## 🚀 Compilar y ejecutar / Build & Run
+## 🚀 Compilación y ejecución / Build & Run
 
 ### Con Alire (recomendado)
 
@@ -95,24 +116,14 @@ Hello, Ada!
 
 ---
 
-**ES:** Para más detalles sobre la toolchain y la estructura de proyectos manuales, ver [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) y [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/).  
-**EN:** For more details about the toolchain and manual project structure, see [`hello_world/Readme.md`](https://yorche3.github.io/programming_languages/ada/core/foundations/hello_world/) and [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/).
+## 📝 Notas de implementación / Implementation Notes
+
+- **ES:** El buffer `Name(1 .. 100)` es de tamaño fijo; `Get_Line` devuelve la longitud real en `Length` para evitar imprimir basura.
+- **EN:** The `Name(1 .. 100)` buffer is fixed-size; `Get_Line` returns the actual length in `Length` to avoid printing garbage.
+- **ES:** `alr run` genera `config/` automáticamente; este directorio es específico del entorno y no debe versionarse.
+- **EN:** `alr run` generates `config/` automatically; this directory is environment-specific and must not be versioned.
 
 ---
-
-## 📁 Estructura / Structure
-
-```text
-hello_user/
-├── hello_user.adb    # Código fuente
-├── hello_user.gpr    # Proyecto GPRbuild
-├── alire.toml         # Manifiesto Alire
-├── .gitignore         # Ignora alire/, bin/, config/, obj/
-├── bin/               # Ejecutable (generado)
-├── obj/               # Objetos (generado)
-├── config/            # Configuración auto-generada por `alr run`
-└── alire/             # Dependencias (generado)
-```
 
 ### 🌐 Otras implementaciones / Other implementations
 

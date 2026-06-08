@@ -4,7 +4,7 @@ Implementación de la especificación [03_Unit_Test_Calculator](https://yorche3.
 
 ---
 
-## 📂 Archivos / Files
+## 📂 Archivos y estructura / Files & Structure
 
 ### Raíz del proyecto / Project root (`--lib`)
 
@@ -28,9 +28,35 @@ Implementación de la especificación [03_Unit_Test_Calculator](https://yorche3.
 | `tests/tests.gpr` | Proyecto GPRbuild del ejecutable de pruebas. |
 | `tests/alire.toml` | Manifiesto Alire con dependencias: `calculator` (local) y `aunit`. |
 
+**Estructura de directorios esperada:**
+
+```text
+calculator/                       # Biblioteca / Library (alr init --lib)
+├── src/
+│   ├── calculator.ads            # Especificación / Specification
+│   └── calculator.adb            # Implementación / Implementation
+├── tests/                        # Subproyecto de pruebas / Test subproject (alr init --bin)
+│   ├── src/
+│   │   ├── calculator_tests.ads  # Casos de prueba / Test cases (spec)
+│   │   ├── calculator_tests.adb  # Casos de prueba / Test cases (body)
+│   │   ├── calculator_suite.ads  # Suite de pruebas / Test suite (spec)
+│   │   ├── calculator_suite.adb  # Suite de pruebas / Test suite (body)
+│   │   └── tests.adb             # Punto de entrada / Entry point
+│   ├── tests.gpr                 # Proyecto GPRbuild de pruebas
+│   └── alire.toml                # Dependencias: calculator (local), aunit
+├── calculator.gpr                # Proyecto GPRbuild de la biblioteca
+├── alire.toml                    # Manifiesto Alire
+├── .gitignore
+├── obj/                          # Objetos (generado)
+├── lib/                          # Biblioteca compilada (generado)
+├── bin/                          # Ejecutables (generado)
+├── config/                       # Configuración auto-generada (generado)
+└── alire/                        # Dependencias (generado)
+```
+
 ---
 
-## 🏗️ Enfoque / Approach
+## 🛠️ Enfoque y construcción / Approach & Build
 
 **ES:** Este proyecto sigue el patrón `--lib` + subproyecto `tests/` (`--bin`):
 
@@ -69,7 +95,7 @@ cd ..
 
 ---
 
-## 🚀 Compilar y ejecutar / Build & Run
+## 🚀 Compilación y ejecución / Build & Run
 
 ### Compilar la biblioteca / Build the library
 
@@ -103,35 +129,7 @@ Failed      :  0
 
 ---
 
-## 📁 Estructura / Structure
-
-```text
-calculator/                       # Biblioteca / Library (alr init --lib)
-├── src/
-│   ├── calculator.ads            # Especificación / Specification
-│   └── calculator.adb            # Implementación / Implementation
-├── tests/                        # Subproyecto de pruebas / Test subproject (alr init --bin)
-│   ├── src/
-│   │   ├── calculator_tests.ads  # Casos de prueba / Test cases (spec)
-│   │   ├── calculator_tests.adb  # Casos de prueba / Test cases (body)
-│   │   ├── calculator_suite.ads  # Suite de pruebas / Test suite (spec)
-│   │   ├── calculator_suite.adb  # Suite de pruebas / Test suite (body)
-│   │   └── tests.adb             # Punto de entrada / Entry point
-│   ├── tests.gpr                 # Proyecto GPRbuild de pruebas
-│   └── alire.toml                # Dependencias: calculator (local), aunit
-├── calculator.gpr                # Proyecto GPRbuild de la biblioteca
-├── alire.toml                    # Manifiesto Alire
-├── .gitignore
-├── obj/                          # Objetos (generado)
-├── lib/                          # Biblioteca compilada (generado)
-├── bin/                          # Ejecutables (generado)
-├── config/                       # Configuración auto-generada (generado)
-└── alire/                        # Dependencias (generado)
-```
-
----
-
-## 🧪 Operaciones / Operations
+## 🧠 Algoritmos / operaciones (según el módulo)
 
 | Función / Function | Implementación / Implementation |
 |-------------------|-------------------------------|
@@ -140,6 +138,17 @@ calculator/                       # Biblioteca / Library (alr init --lib)
 | `Multiplication(A, B)` | Suma repetitiva de `A`, `B` veces / Repeated addition |
 | `Division(A, B)` | Resta repetitiva: cuántas veces cabe `B` en `A` / Repeated subtraction |
 | `Modulus(A, B)` | `A - (Division(A, B) * B)` usando `Multiplication` y `Subtraction` |
+
+---
+
+## 📝 Notas de implementación / Implementation Notes
+
+- **ES:** Multiplicación y división se implementan con sumas/restas repetitivas para cumplir la especificación educativa (sin operadores `*` ni `/` directos).
+- **EN:** Multiplication and division are implemented with repeated addition/subtraction to comply with the educational specification (no direct `*` or `/` operators).
+- **ES:** AUnit requiere registrar cada test manualmente en una suite usando `AUnit.Test_Caller`, a diferencia de otros frameworks que descubren tests automáticamente.
+- **EN:** AUnit requires manually registering each test in a suite using `AUnit.Test_Caller`, unlike other frameworks that auto-discover tests.
+
+---
 
 ### 🌐 Otras implementaciones / Other implementations
 

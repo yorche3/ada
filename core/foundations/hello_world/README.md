@@ -4,7 +4,7 @@ Implementación de la especificación [01_Hello_World](https://yorche3.github.io
 
 ---
 
-## 📂 Archivos / Files
+## 📂 Archivos y estructura / Files & Structure
 
 | Archivo | Propósito |
 |---------|-----------|
@@ -12,11 +12,23 @@ Implementación de la especificación [01_Hello_World](https://yorche3.github.io
 | [`hello_world.gpr`](hello_world.gpr) | Proyecto GPRbuild: configura directorios `obj/`, `bin/`, y el ejecutable. |
 | [`alire.toml`](alire.toml) | Manifiesto de Alire: declara el nombre, versión y ejecutable (`hello_world`). |
 | [`.gitignore`](.gitignore) | Ignora `alire/`, `bin/` y `obj/` — archivos generados por compilación y dependencias. |
-| [`Readme.md`](Readme.md) | Este archivo. |
+
+**Estructura de directorios esperada:**
+
+```text
+hello_world/
+├── hello_world.adb    # Código fuente
+├── hello_world.gpr    # Proyecto GPRbuild
+├── alire.toml         # Manifiesto Alire
+├── .gitignore         # Ignora alire/, bin/, obj/
+├── bin/               # Ejecutable (generado)
+├── obj/               # Objetos (generado)
+└── alire/             # Dependencias (generado)
+```
 
 ---
 
-## 🛠️ Enfoque / Approach
+## 🛠️ Enfoque y construcción / Approach & Build
 
 **ES:** Este proyecto fue creado **manualmente**, sin usar `alr init`. Esto permite:
 
@@ -30,7 +42,7 @@ Implementación de la especificación [01_Hello_World](https://yorche3.github.io
 
 ---
 
-## 📄 Archivos clave / Key Files
+## 📄 Archivos de configuración clave / Key Configuration Files
 
 **ES:** Para que Alire reconozca y compile este proyecto se necesitan **tres archivos mínimos**, creados a mano:
 
@@ -88,7 +100,7 @@ obj/
 
 ---
 
-## 🚀 Compilar y ejecutar / Build & Run
+## 🚀 Compilación y ejecución / Build & Run
 
 ### Con Alire (recomendado)
 
@@ -118,23 +130,14 @@ gprbuild -p -P hello_world.gpr
 
 ---
 
-**ES:** La toolchain (Alire 2.1.0, gnat_native 15.2.1, gprbuild 25.0.1) se configura globalmente. Ver [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/) para instrucciones de instalación.  
-**EN:** The toolchain (Alire 2.1.0, gnat_native 15.2.1, gprbuild 25.0.1) is configured globally. See [`ada/Readme.md`](https://yorche3.github.io/programming_languages/ada/) for installation instructions.
+## 📝 Notas de implementación / Implementation Notes
+
+- **ES:** El proyecto usa Alire 2.1.0 con gnat_native 15.2.1 y gprbuild 25.0.1. La toolchain se configura globalmente (ver [`ada/Readme.md`](../../../README.md)).
+- **EN:** The project uses Alire 2.1.0 with gnat_native 15.2.1 and gprbuild 25.0.1. The toolchain is configured globally (see [`ada/Readme.md`](../../../README.md)).
+- **ES:** No se usó `alr init`; los tres archivos mínimos (`alire.toml`, `.gpr`, `.gitignore`) se crearon a mano para entender el rol de cada uno.
+- **EN:** No `alr init` was used; the three minimal files (`alire.toml`, `.gpr`, `.gitignore`) were hand-created to understand the role of each.
 
 ---
-
-## 📁 Estructura / Structure
-
-```text
-hello_world/
-├── hello_world.adb    # Código fuente
-├── hello_world.gpr    # Proyecto GPRbuild
-├── alire.toml         # Manifiesto Alire
-├── .gitignore         # Ignora alire/, bin/, obj/
-├── bin/               # Ejecutable (generado)
-├── obj/               # Objetos (generado)
-└── alire/             # Dependencias (generado)
-```
 
 ### 🌐 Otras implementaciones / Other implementations
 

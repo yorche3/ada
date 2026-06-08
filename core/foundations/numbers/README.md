@@ -4,7 +4,7 @@ Implementación de la especificación [04_Numbers](https://yorche3.github.io/pro
 
 ---
 
-## 📂 Archivos / Files
+## 📂 Archivos y estructura / Files & Structure
 
 ### Raíz del proyecto / Project root (`--lib`)
 
@@ -30,9 +30,37 @@ Implementación de la especificación [04_Numbers](https://yorche3.github.io/pro
 | `tests/tests.gpr` | Proyecto GPRbuild del ejecutable de pruebas |
 | `tests/alire.toml` | Manifiesto Alire con dependencias: `numbers` (local) y `aunit` |
 
+**Estructura de directorios esperada:**
+
+```text
+numbers/                          # Biblioteca / Library (alr init --lib)
+├── src/
+│   ├── numbers.ads               # Especificación / Specification
+│   └── numbers.adb               # Implementación / Implementation
+├── tests/                        # Subproyecto de pruebas / Test subproject (alr init --bin)
+│   ├── src/
+│   │   ├── recursive_tests.ads / .adb          # Tests recursivos directos
+│   │   ├── recursive_with_acc_tests.ads / .adb # Tests recursivos con acumulador
+│   │   ├── iterative_tests.ads / .adb          # Tests iterativos
+│   │   ├── recursive_suite.ads / .adb          # Suite recursiva
+│   │   ├── recursive_with_acc_suite.ads / .adb # Suite con acumulador
+│   │   ├── iterative_suite.ads / .adb          # Suite iterativa
+│   │   └── tests.adb                           # Punto de entrada
+│   ├── tests.gpr                 # Proyecto GPRbuild de pruebas
+│   └── alire.toml                # Dependencias: numbers (local), aunit
+├── numbers.gpr                   # Proyecto GPRbuild de la biblioteca
+├── alire.toml                    # Manifiesto Alire
+├── .gitignore
+├── obj/                          # Objetos (generado)
+├── lib/                          # Biblioteca compilada (generado)
+├── bin/                          # Ejecutables (generado)
+├── config/                       # Configuración auto-generada (generado)
+└── alire/                        # Dependencias (generado)
+```
+
 ---
 
-## 🏗️ Enfoque / Approach
+## 🛠️ Enfoque y construcción / Approach & Build
 
 **ES:** Mismo patrón `--lib` + subproyecto `tests/` (`--bin`) que [`calculator`](../unit_test/calculator/).
 
@@ -40,7 +68,7 @@ Implementación de la especificación [04_Numbers](https://yorche3.github.io/pro
 
 ---
 
-## 🚀 Compilar y ejecutar / Build & Run
+## 🚀 Compilación y ejecución / Build & Run
 
 ### Compilar la biblioteca / Build the library
 
@@ -66,7 +94,7 @@ Failed      :  0
 
 ---
 
-## 🧪 Algoritmos / Algorithms
+## 🧠 Algoritmos / operaciones (según el módulo)
 
 ### 3 enfoques × 5 algoritmos = 15 funciones
 
@@ -77,6 +105,30 @@ Failed      :  0
 | `Fibonacci` | ✅ | ✅ | ✅ |
 | `Greatest_Common_Divisor` | ✅ | ✅ | ✅ |
 | `Least_Common_Multiple` | ✅ | ✅ | ✅ |
+
+---
+
+## 📝 Notas de implementación / Implementation Notes
+
+### 🔁 Sobre recursión con acumulador y Tail Call Optimization (TCO) / On recursion with accumulator and Tail Call Optimization (TCO)
+
+**ES:**
+
+Tail recursion ocurre cuando la llamada recursiva es la última acción que ejecuta una función/método; después de la llamada no hay más instrucciones, la función devuelve el resultado de la llamada recursiva. La recursión con acumulador consigue esto pasando el estado previo como parámetro a cada llamada, sin dejar trabajo pendiente en la pila.
+
+En **Ada**, el compilador **GNAT** puede optimizar llamadas terminales (TCO) con niveles de optimización como `-O2` o superiores. Sin embargo, la especificación del lenguaje Ada **no garantiza** TCO de forma explícita. En la práctica, GNAT aplica TCO en muchos casos cuando detecta una llamada terminal, especialmente en modo de optimización.
+
+Dado que Ada ofrece esta optimización en tiempo de compilación, las funciones con acumulador (`_Acc`) tienen tests directos (5 tests) al igual que los otros enfoques, ya que representan una implementación válida y eficiente en la práctica.
+
+**EN:**
+
+Tail recursion occurs when the recursive call is the last action that runs a function/method; after the call there are no more instructions, the function returns the result of the recursive call. Recursion with accumulator achieves this by passing the previous state as a parameter to each call, without leaving any pending work on the stack.
+
+In **Ada**, the **GNAT** compiler can optimize tail calls (TCO) with optimization levels like `-O2` or higher. However, the Ada language specification **does not guarantee** TCO explicitly. In practice, GNAT applies TCO in many cases when a tail call is detected, especially in optimization mode.
+
+Since Ada offers this optimization at compile time, the accumulator functions (`_Acc`) have direct tests (5 tests) just like the other approaches, as they represent a valid and efficient implementation in practice.
+
+---
 
 ### 🌐 Otras implementaciones / Other implementations
 
