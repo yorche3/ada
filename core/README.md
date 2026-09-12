@@ -11,7 +11,7 @@
 | Fase | Directorio | Estado | Descripción |
 |------|-----------|--------|-------------|
 | 0 | [`foundations/`](foundations/) | ✅ | hello_world, hello_user, calculator, numbers |
-| 1 | `algorithms/` (pendiente) | 📋 | naive_sort, data_structures, efficient_sort, distributed_sort, searching |
+| 1 | [`algorithms/`](algorithms/) | 🔄 | `naive_sort` ✅ — data_structures, structures_apps, efficient_sort, distributed_sort, searching |
 | 2 | `text/` (pendiente) | 📋 | Transformations, patterns, substr, input_output, etl_basico |
 | 3 | `data/` (pendiente) | 📋 | modeling, strsearch, regex, parsing, data_base, integracion_etl |
 | 4 | `math/` (pendiente) | 📋 | statistics, linear_algebra |
@@ -29,4 +29,4 @@ Este proyecto también está implementado en otros lenguajes. Explora el [reposi
 
 ---
 
-*[← Volver a Ada](../Readme.md)*
+*[← Volver a Ada](../README.md)*
