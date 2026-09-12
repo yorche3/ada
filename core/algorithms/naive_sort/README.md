@@ -61,9 +61,9 @@ naive_sort/                       # Biblioteca / Library (alr init --lib)
 
 **EN:** Same `--lib` + test subproject pattern as [`numbers`](../../foundations/numbers/README.md), except the subproject is named `test/` (singular) for this module. The algorithms are implemented manually, without invoking native sort libraries.
 
-**Salida de estilos / Style output:** GNAT aplica sus comprobaciones de estilo (`-gnaty`) y reporta avisos de formato y una sugerencia de `constant` en `naive_sort.adb`. No son errores: la compilación y el enlace terminan con éxito.
+**Salida de estilos / Style output:** GNAT aplica sus comprobaciones de estilo (`-gnaty`) sobre el código propio del proyecto. Tras el ajuste a convenciones idiomáticas (atributos `'First`/`'Last`, `Key` como `constant`, espacio antes de `(` al indexar), solo quedan 4 avisos `line too long [-gnatyM]` en comentarios descriptivos largos de `naive_sort.adb` y `naive_sort_suite.adb`. No son errores: la compilación y el enlace terminan con éxito.
 
-**EN:** GNAT applies its style checks (`-gnaty`) and reports formatting warnings plus a `constant` suggestion in `naive_sort.adb`. These are not errors: compilation and linking succeed.
+**EN:** GNAT applies its style checks (`-gnaty`) to the project's own code. After aligning the implementation with idiomatic conventions (`'First`/`'Last` attributes, `Key` as `constant`, a space before `(` when indexing), only 4 `line too long [-gnatyM]` notices remain, from long descriptive comments in `naive_sort.adb` and `naive_sort_suite.adb`. These are not errors: compilation and linking succeed.
 
 ---
 
@@ -128,7 +128,7 @@ Cada algoritmo verifica los mismos 7 escenarios (21 aserciones en total) / Each 
 | Idénticos / Identical | `(7, 7, 7, 7)` | `(7, 7, 7, 7)` |
 | Negativos / Negatives | `(3, -1, 4, -5, 0)` | `(-5, -1, 0, 3, 4)` |
 | Un elemento / Single element | `(0 => 42)` | `(0 => 42)` |
-| Vacío / Empty | `(1 .. 0 => 0)` | `(1 .. 0 => 0)` |
+| Vacío / Empty | `(1 .. 0 => <>)` | `(1 .. 0 => <>)` |
 
 ---
 
@@ -136,9 +136,9 @@ Cada algoritmo verifica los mismos 7 escenarios (21 aserciones en total) / Each 
 
 ### 🧱 Tipo de array no restringido / Unconstrained array type
 
-**ES:** `Integer_Array` es un array no restringido (`array (Natural range <>) of Integer`). Su rango se fija con el argumento real en cada llamada, no en la declaración del tipo. Por eso un agregado de un solo elemento debe usar un índice explícito, `(0 => 42)`: `Integer_Array'First` no es válido porque el tipo no está restringido. El caso vacío se expresa como `(1 .. 0 => 0)`.
+**ES:** `Integer_Array` es un array no restringido (`array (Natural range <>) of Integer`). Su rango se fija con el argumento real en cada llamada, no en la declaración del tipo. Por eso un agregado de un solo elemento debe usar un índice explícito, `(0 => 42)`: `Integer_Array'First` no es válido porque el tipo no está restringido. El caso vacío se expresa como `(1 .. 0 => <>)`: el rango `1 .. 0` es nulo (0 componentes), así que el `<>` nunca se evalúa.
 
-**EN:** `Integer_Array` is an unconstrained array (`array (Natural range <>) of Integer`). Its range is fixed by the actual argument on each call, not by the type declaration. Therefore a single-element aggregate must use an explicit index, `(0 => 42)`: `Integer_Array'First` is not valid because the type is not constrained. The empty case is written as `(1 .. 0 => 0)`.
+**EN:** `Integer_Array` is an unconstrained array (`array (Natural range <>) of Integer`). Its range is fixed by the actual argument on each call, not by the type declaration. Therefore a single-element aggregate must use an explicit index, `(0 => 42)`: `Integer_Array'First` is not valid because the type is not constrained. The empty case is written as `(1 .. 0 => <>)`: the `1 .. 0` range is null (0 components), so the `<>` is never evaluated.
 
 ### 🔁 Sobre el sentido de "in-place" / On the meaning of "in-place"
 
@@ -157,6 +157,12 @@ Cada algoritmo verifica los mismos 7 escenarios (21 aserciones en total) / Each 
 **ES:** Las tres funciones comparten el mismo perfil, así que la suite pasa cada una a un helper común mediante el tipo de acceso `Sort_Function`. Esto evita duplicar los 7 casos por algoritmo y mantiene un único punto de verdad para los datos esperados. La suite se registra con `AUnit.Test_Caller` y el runner reporta un caso por algoritmo.
 
 **EN:** All three functions share the same profile, so the suite passes each one to a shared helper through the `Sort_Function` access type. This avoids duplicating the 7 cases per algorithm and keeps a single source of truth for the expected data. The suite is registered with `AUnit.Test_Caller` and the runner reports one case per algorithm.
+
+### 🎫 Convenciones idiomáticas de Ada / Idiomatic Ada conventions
+
+**ES:** La implementación usa `Result'First` y `Result'Last` como límites de los bucles en lugar de aritmética manual sobre `Arr'Length`, de modo que el código sigue siendo correcto sin asumir un límite inferior fijo (por ejemplo, si `Integer_Array` se instanciara con otro rango). `Key` en `Insertion_Sort` se declara `constant` porque no se reasigna dentro del bucle, y el indexado usa un espacio antes del paréntesis (`Result (J)`), siguiendo la convención de estilo de GNAT (`-gnatyt`).
+
+**EN:** The implementation uses `Result'First` and `Result'Last` as loop bounds instead of manual arithmetic over `Arr'Length`, so the code stays correct without assuming a fixed lower bound (for example, if `Integer_Array` were instantiated with a different range). `Key` in `Insertion_Sort` is declared `constant` because it is never reassigned inside the loop, and indexing uses a space before the parenthesis (`Result (J)`), following GNAT's style convention (`-gnatyt`).
 
 ---
 
