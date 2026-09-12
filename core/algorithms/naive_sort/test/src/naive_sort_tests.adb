@@ -11,14 +11,16 @@ package body Naive_Sort_Tests is
    Equal_Input : constant Integer_Array := (7, 7, 7, 7);
    Negative_Input : constant Integer_Array := (3, -1, 4, -5, 0);
    Negative_Output : constant Integer_Array := (-5, -1, 0, 3, 4);
-        Single_Input : constant Integer_Array := (0 => 42);
-   Empty_Input : constant Integer_Array := (1 .. 0 => 0);
+   Single_Input : constant Integer_Array := (0 => 42);
+   --  Null range (1 .. 0): zero components, so this box is never evaluated;
+   --  Integer_Array is a value type and cannot itself be null (see .ads).
+   Empty_Input : constant Integer_Array := (1 .. 0 => <>);
 
    -- Assert all test cases for a given sorting algorithm
    -- Sort : access to the sorting function to be tested that must return a sorted integer array
    -- Algorithm_Name : the name of the sorting algorithm, used in assertion messages
-        procedure Assert_All_Cases
-                (Sort : Sort_Function; Algorithm_Name : String) is
+   procedure Assert_All_Cases
+      (Sort : Sort_Function; Algorithm_Name : String) is
    begin
       Assert (Sort (Standard_Input) = Standard_Output,
               Algorithm_Name & " should sort an unsorted array");
