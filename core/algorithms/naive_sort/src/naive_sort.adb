@@ -37,4 +37,42 @@ package body Naive_Sort is
       end loop;
       return Result;
    end Selection_Sort;
+
+   -- Bubble_Sort : sorts an array of integers using the bubble sort algorithm
+   -- Input: Arr - an array of integers to be sorted
+   -- Output: a new array containing the sorted integers from Arr
+   function Bubble_Sort (Arr : Integer_Array) return Integer_Array is
+      Result : Integer_Array (Arr'Range) := Arr;
+      N : constant Natural := Arr'Length;
+   begin
+      -- verify if arr is null or empty and returns empty array
+      if Arr'Length = 0 then
+         return Result;
+      end if;
+      -- if n <= 1, the array is already sorted
+      if N <= 1 then
+         return Result;
+      end if;
+
+      -- perform bubble sort
+      for I in Result'First .. N - 2 loop
+         declare
+            Swapped : Boolean := False;
+         begin
+            for J in Result'First .. N - 2 - I loop
+               if Result(J) > Result(J + 1) then
+                  declare
+                     Temp : Integer := Result(J);
+                  begin
+                     Result(J) := Result(J + 1);
+                     Result(J + 1) := Temp;
+                  end;
+                  Swapped := True;
+               end if;
+            end loop;
+            exit when not Swapped;
+         end;
+      end loop;
+      return Result;
+   end Bubble_Sort;
 end Naive_Sort;
