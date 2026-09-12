@@ -1,0 +1,21 @@
+name = "test"
+description = "Unit Testing for naive_sort"
+version = "0.1.0-dev"
+
+authors = ["Yorche"]
+maintainers = ["Yorche <hyaoki123@gmail.com>"]
+maintainers-logins = ["yorche3"]
+licenses = "GPL-3.0-or-later"
+website = ""
+tags = []
+
+executables = ["test"]
+
+[[depends-on]]
+naive_sort = "*"
+
+[[pins]]
+naive_sort = { path='..' }
+
+[[depends-on]]
+aunit = "^26.0.0"

@@ -1,0 +1,10 @@
+name = "naive_sort"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Yorche"]
+maintainers = ["Yorche <hyaoki123@gmail.com>"]
+maintainers-logins = ["yorche3"]
+licenses = "GPL-3.0-or-later"
+website = ""
+tags = []
