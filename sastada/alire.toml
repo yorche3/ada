@@ -1,0 +1,15 @@
+name = "sastada"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Yorche"]
+maintainers = ["Yorche <hyaoki123@gmail.com>"]
+maintainers-logins = ["yorche3"]
+licenses = "LGPL-3.0-or-later"
+website = ""
+tags = []
+
+executables = ["sastada"]
+
+[[depends-on]]
+libadalang = "^26.0.0"
