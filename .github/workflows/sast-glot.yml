@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  security-events: write
+  security-events: write # Requerido para subir el SARIF a CodeQL
   contents: read
 
 jobs:
@@ -23,52 +23,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install ShellCheck and jq
-        run: sudo apt-get update && sudo apt-get install -y shellcheck jq
-
-      - name: Collect shell files
-        id: shell-files
-        run: |
-          # Encuentra todos los .sh dentro de scripts/
-          git ls-files 'scripts/**/*.sh' 'scripts/*.sh' | sort -u > shell-files.txt
-          if [ -s shell-files.txt ]; then
-            echo "has_files=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_files=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Generate ShellCheck SARIF
-        if: steps.shell-files.outputs.has_files == 'true'
-        run: |
-          # Ejecuta ShellCheck y guarda la salida JSON
-          # El '|| true' evita que el workflow falle si ShellCheck encuentra issues
-          xargs -r shellcheck --format=json1 < shell-files.txt > shellcheck.json || true
-
-          # Convierte el JSON a SARIF (esto es un ejemplo simplificado)
-          # En un caso real, usarías un script más robusto o una acción pre-existente
-          jq -n --slurpfile sc shellcheck.json '{
-            "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
-            "version": "2.1.0",
-            "runs": [{
-              "tool": { "driver": { "name": "ShellCheck", "informationUri": "https://www.shellcheck.net/" } },
-              "results": ($sc[0] | map({
-                "ruleId": .code,
-                "level": (if .level == "error" then "error" elif .level == "warning" then "warning" else "note" end),
-                "message": { "text": .message },
-                "locations": [{
-                  "physicalLocation": {
-                    "artifactLocation": { "uri": .file },
-                    "region": { "startLine": .line, "startColumn": .column }
-                  }
-                }]
-              }))
-            }]
-          }' > shellcheck-results.sarif
+      - name: Run ShellCheck
+        # Esta acción oficial ya busca archivos .sh y .bash, o archivos con shebang.
+        # Además, convierte los resultados automáticamente a SARIF.
+        uses: redhat-plumbers-in-action/differential-shellcheck@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Excluimos los snapshots cerrados para que no generen ruido
+          # Ajusta este path si es necesario
+          exclude-path: 'scripts/versions/**/*.sh'
 
       - name: Upload SARIF results
-        if: steps.shell-files.outputs.has_files == 'true'
+        # El paso anterior genera un archivo llamado differential-shellcheck.sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: shellcheck-results.sarif
-          # 'category' permite diferenciar múltiples herramientas en el futuro
+          sarif_file: differential-shellcheck.sarif
           category: "shellcheck-glot"
