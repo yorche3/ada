@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  security-events: write # Requerido para subir el SARIF a CodeQL
+  security-events: write
   contents: read
 
 jobs:
@@ -21,21 +21,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6 # Actualizado a v6
 
       - name: Run ShellCheck
-        # Esta acción oficial ya busca archivos .sh y .bash, o archivos con shebang.
-        # Además, convierte los resultados automáticamente a SARIF.
+        id: ShellCheck # ID necesario para usar el output
         uses: redhat-plumbers-in-action/differential-shellcheck@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Excluimos los snapshots cerrados para que no generen ruido
-          # Ajusta este path si es necesario
-          exclude-path: 'scripts/versions/**/*.sh'
+          scan-directory: 'scripts'
+          exclude-path: |
+            scripts/versions/**/*.sh
+          # severity: 'warning' # Opcional: ajusta el nivel de severidad
 
       - name: Upload SARIF results
-        # El paso anterior genera un archivo llamado differential-shellcheck.sarif
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: differential-shellcheck.sarif
+          sarif_file: ${{ steps.ShellCheck.outputs.sarif }}
           category: "shellcheck-glot"
