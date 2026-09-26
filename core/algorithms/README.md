@@ -8,13 +8,13 @@ Implementaciones de la [Fase 1 — Algoritmos Puros](https://yorche3.github.io/p
 
 ```text
 algorithms/
-└── naive_sort/               # 05_Naive_Sort — lib + test
+└── naive_sort/               # 05_Naive_Sort — lib + tests
     ├── src/
     │   ├── naive_sort.ads
     │   └── naive_sort.adb
-    ├── test/
+    ├── tests/
     │   ├── src/
-    │   ├── test.gpr
+    │   ├── tests.gpr
     │   └── alire.toml
     ├── naive_sort.gpr
     ├── alire.toml
@@ -27,7 +27,7 @@ algorithms/
 
 | Módulo | Especificación | Enfoque | Estado |
 |--------|---------------|---------|--------|
-| `naive_sort` | [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) | `--lib` + `test/` (`--bin`) | ✅ |
+| `naive_sort` | [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) | `--lib` + `tests/` (`--bin`) | ✅ |
 | `data_structures` | [06_Data_Structures](https://yorche3.github.io/programming_languages/core/algorithms/06_Data_Structures/) | — | 📋 |
 | `structures_apps` | [07_Structures_Apps](https://yorche3.github.io/programming_languages/core/algorithms/07_Structures_Apps/) | — | 📋 |
 | `efficient_sort` | [08_Efficient_Sort](https://yorche3.github.io/programming_languages/core/algorithms/08_Efficient_Sort/) | — | 📋 |
