@@ -16,20 +16,16 @@ package Data_Structures_Basics is
 
    type Linked_List is private;
 
-   function Initialize_Linked_List
-     (Capacity : Natural) return Linked_List;
-   function Insert_Head
-     (List : in out Linked_List; Value : Integer) return Boolean;
-   function Insert_Tail
-     (List : in out Linked_List; Value : Integer) return Boolean;
+   function Get_Head (List : Linked_List) return Node_Access;
+   procedure Insert_Head (List : in out Linked_List; Value : Integer);
+   procedure Insert_Tail (List : in out Linked_List; Value : Integer);
    function Delete (List : in out Linked_List; Value : Integer) return Boolean;
    function Is_Empty (List : Linked_List) return Boolean;
    function Size (List : Linked_List) return Natural;
 
    type Stack is private;
 
-   function Initialize_Stack (Capacity : Natural) return Stack;
-   function Push (Item : in out Stack; Value : Integer) return Boolean;
+   procedure Push (Item : in out Stack; Value : Integer);
    function Pop (Item : in out Stack) return Integer;
    function Peek (Item : Stack) return Integer;
    function Is_Empty (Item : Stack) return Boolean;
@@ -37,8 +33,7 @@ package Data_Structures_Basics is
 
    type Queue is private;
 
-   function Initialize_Queue (Capacity : Natural) return Queue;
-   function Enqueue (Item : in out Queue; Value : Integer) return Boolean;
+   procedure Enqueue (Item : in out Queue; Value : Integer);
    function Dequeue (Item : in out Queue) return Integer;
    function Peek (Item : Queue) return Integer;
    function Is_Empty (Item : Queue) return Boolean;
@@ -50,18 +45,19 @@ private
          Head     : Node_Access := null;
          Tail     : Node_Access := null;
          Count    : Natural := 0;
-         Capacity : Natural := 0;
-         Usable   : Boolean := False;
       end record;
 
    type Stack is
       record
-         List : Linked_List;
+         Top   : Node_Access := null;
+         Count : Natural := 0;
       end record;
 
    type Queue is
       record
-         List : Linked_List;
+         Front : Node_Access := null;
+         Rear  : Node_Access := null;
+         Count : Natural := 0;
       end record;
 
 end Data_Structures_Basics;
