@@ -1,8 +1,8 @@
 # Naive Sort — Ada
 
-Implementación de la especificación [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) en **Ada**, usando el patrón **biblioteca (`--lib`) + subproyecto de pruebas (`test/`, `--bin`)** con [AUnit](https://github.com/AdaCore/aunit).
+Implementación de la especificación [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) en **Ada**, usando el patrón **biblioteca (`--lib`) + subproyecto de pruebas (`tests/`, `--bin`)** con [AUnit](https://github.com/AdaCore/aunit).
 
-Implementation of the [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) specification in **Ada**, using the **library (`--lib`) + test subproject (`test/`, `--bin`)** pattern with [AUnit](https://github.com/AdaCore/aunit).
+Implementation of the [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) specification in **Ada**, using the **library (`--lib`) + test subproject (`tests/`, `--bin`)** pattern with [AUnit](https://github.com/AdaCore/aunit).
 
 ---
 
@@ -18,16 +18,16 @@ Implementation of the [05_Naive_Sort](https://yorche3.github.io/programming_lang
 | [`alire.toml`](alire.toml) | Manifiesto Alire — nombre, versión, autor, licencia. |
 | [`.gitignore`](.gitignore) | Ignora `obj/`, `lib/`, `alire/` y `config/`. |
 
-### Subproyecto de pruebas / Test subproject (`test/`, `--bin`)
+### Subproyecto de pruebas / Test subproject (`tests/`, `--bin`)
 
 | Archivo / File | Propósito / Purpose |
 |----------------|---------------------|
-| [`test/src/naive_sort_tests.ads`](test/src/naive_sort_tests.ads) | Fixture `Test`, tipo `Sort_Function` y declaración de los tres casos. |
-| [`test/src/naive_sort_tests.adb`](test/src/naive_sort_tests.adb) | Casos de prueba y helper `Assert_All_Cases` con los 7 escenarios. |
-| [`test/src/naive_sort_suite.ads`](test/src/naive_sort_suite.ads) / [`.adb`](test/src/naive_sort_suite.adb) | Suite AUnit que agrupa los tres algoritmos. |
-| [`test/src/test.adb`](test/src/test.adb) | Punto de entrada — ejecuta la suite con `AUnit.Run.Test_Runner`. |
-| [`test/test.gpr`](test/test.gpr) | Proyecto GPRbuild del ejecutable de pruebas. |
-| [`test/alire.toml`](test/alire.toml) | Dependencias: `naive_sort` (local, pin `..`) y `aunit ^26.0.0`. |
+| [`tests/src/naive_sort_tests.ads`](tests/src/naive_sort_tests.ads) | Fixture `Test`, tipo `Sort_Function` y declaración de los tres casos. |
+| [`tests/src/naive_sort_tests.adb`](tests/src/naive_sort_tests.adb) | Casos de prueba y helper `Assert_All_Cases` con los 7 escenarios. |
+| [`tests/src/naive_sort_suite.ads`](tests/src/naive_sort_suite.ads) / [`.adb`](tests/src/naive_sort_suite.adb) | Suite AUnit que agrupa los tres algoritmos. |
+| [`tests/src/tests.adb`](tests/src/tests.adb) | Punto de entrada — ejecuta la suite con `AUnit.Run.Test_Runner`. |
+| [`tests/tests.gpr`](tests/tests.gpr) | Proyecto GPRbuild del ejecutable de pruebas. |
+| [`tests/alire.toml`](tests/alire.toml) | Dependencias: `naive_sort` (local, pin `..`) y `aunit ^26.0.0`. |
 
 **Estructura de directorios esperada / Expected directory structure:**
 
@@ -36,12 +36,12 @@ naive_sort/                       # Biblioteca / Library (alr init --lib)
 ├── src/
 │   ├── naive_sort.ads            # Especificación / Specification
 │   └── naive_sort.adb            # Implementación / Implementation
-├── test/                         # Subproyecto de pruebas / Test subproject (alr init --bin)
+├── tests/                        # Subproyecto de pruebas / Test subproject (alr init --bin)
 │   ├── src/
 │   │   ├── naive_sort_tests.ads / .adb   # Casos de prueba / Test cases
 │   │   ├── naive_sort_suite.ads / .adb   # Suite AUnit / AUnit suite
-│   │   └── test.adb                      # Punto de entrada / Entry point
-│   ├── test.gpr                  # Proyecto GPRbuild de pruebas / Test GPRbuild project
+│   │   └── tests.adb                     # Punto de entrada / Entry point
+│   ├── tests.gpr                 # Proyecto GPRbuild de pruebas / Test GPRbuild project
 │   └── alire.toml                # Dependencias / Dependencies
 ├── naive_sort.gpr                # Proyecto GPRbuild de la biblioteca / Library GPRbuild project
 ├── alire.toml                    # Manifiesto Alire / Alire manifest
@@ -57,13 +57,13 @@ naive_sort/                       # Biblioteca / Library (alr init --lib)
 
 ## 🛠️ Enfoque y construcción / Approach & Build
 
-**ES:** Mismo patrón `--lib` + subproyecto de pruebas que [`numbers`](../../foundations/numbers/README.md), con la diferencia de que el subproyecto se llama `test/` (singular) para este módulo. Los algoritmos se implementan manualmente, sin invocar bibliotecas nativas de ordenamiento.
+**ES:** Mismo patrón `--lib` + subproyecto de pruebas que [`numbers`](../../foundations/numbers/README.md): el subproyecto se llama `tests/` (plural), como en el resto de los módulos de Ada. Los algoritmos se implementan manualmente, sin invocar bibliotecas nativas de ordenamiento.
 
-**EN:** Same `--lib` + test subproject pattern as [`numbers`](../../foundations/numbers/README.md), except the subproject is named `test/` (singular) for this module. The algorithms are implemented manually, without invoking native sort libraries.
+**EN:** Same `--lib` + test subproject pattern as [`numbers`](../../foundations/numbers/README.md): the subproject is named `tests/` (plural), as in the rest of the Ada modules. The algorithms are implemented manually, without invoking native sort libraries.
 
-**Salida de estilos / Style output:** GNAT aplica sus comprobaciones de estilo (`-gnaty`) sobre el código propio del proyecto. Tras el ajuste a convenciones idiomáticas (atributos `'First`/`'Last`, `Key` como `constant`, espacio antes de `(` al indexar), solo quedan 4 avisos `line too long [-gnatyM]` en comentarios descriptivos largos de `naive_sort.adb` y `naive_sort_suite.adb`. No son errores: la compilación y el enlace terminan con éxito.
+**Salida de estilos / Style output:** GNAT aplica sus comprobaciones de estilo (`-gnaty`) sobre el código propio del proyecto. Desde un build limpio, la compilación de `tests/` deja **9 avisos**, ninguno de ellos error: 2 de `line too long [-gnatyM]` en comentarios de `naive_sort_suite.adb` y 7 de `space required [-gnatyc]` en los agregados de `naive_sort_tests.adb`. La compilación y el enlace terminan con éxito.
 
-**EN:** GNAT applies its style checks (`-gnaty`) to the project's own code. After aligning the implementation with idiomatic conventions (`'First`/`'Last` attributes, `Key` as `constant`, a space before `(` when indexing), only 4 `line too long [-gnatyM]` notices remain, from long descriptive comments in `naive_sort.adb` and `naive_sort_suite.adb`. These are not errors: compilation and linking succeed.
+**EN:** GNAT applies its style checks (`-gnaty`) to the project's own code. From a clean build, compiling `tests/` leaves **9 notices**, none of them errors: 2 `line too long [-gnatyM]` in comments in `naive_sort_suite.adb` and 7 `space required [-gnatyc]` in the aggregates of `naive_sort_tests.adb`. Compilation and linking succeed.
 
 ---
 
@@ -78,7 +78,7 @@ alr build
 ### Ejecutar pruebas unitarias / Run unit tests
 
 ```bash
-alr -C test run
+alr -C tests run
 ```
 
 **Salida real / Actual output:**
