@@ -1,12 +1,21 @@
 name = "tests"
-description = ""
+description = "Unit Testing for data_structures_basics"
 version = "0.1.0-dev"
 
 authors = ["Yorche"]
 maintainers = ["Yorche <hyaoki123@gmail.com>"]
 maintainers-logins = ["yorche3"]
-licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+licenses = "GPL-3.0-or-later"
 website = ""
 tags = []
 
 executables = ["tests"]
+
+[[depends-on]]
+data_structures_basics = "*"
+
+[[pins]]
+data_structures_basics = { path='..' }
+
+[[depends-on]]
+aunit = "^26.0.0"
