@@ -1,0 +1,28 @@
+name: "CI - Run test for current module"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - '**'
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Alire
+        uses: alire-project/setup-alire@latest
+
+      - name: Build library
+        run: alr build
+        working-directory: data_structures_basics
+
+      - name: Run tests
+        run: alr -C tests run
+        working-directory: data_structures_basics
