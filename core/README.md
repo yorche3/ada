@@ -6,27 +6,26 @@
 
 ---
 
-## 📁 Fases / Phases
+## 📁 Módulos / Modules
 
-| Fase | Directorio | Estado | Descripción |
-|------|-----------|--------|-------------|
-| 0 | [`foundations/`](foundations/) | ✅ | hello_world, hello_user, calculator, numbers |
-| 1 | [`algorithms/`](algorithms/) | 🔄 | `naive_sort` ✅ — data_structures, structures_apps, efficient_sort, distributed_sort, searching |
-| 2 | `text/` (pendiente) | 📋 | Transformations, patterns, substr, input_output, etl_basico |
+| Fase | Directorio | Estado | Contenido |
+|------|-----------|--------|-----------|
+| 0 | [`foundations/`](foundations/) | ✅ | `hello_world`, `hello_user`, `unit_test/calculator`, `numbers` |
+| 1 | [`algorithms/`](algorithms/) | 🔄 | `naive_sort` ✅, `data_structures_basics` ✅; pendientes `data_structures_advanced`, `efficient_sort`, `distributed_sort`, `searching` |
+| 2 | `text/` (pendiente) | 📋 | transformations, patterns, substr, input_output, etl_basico |
 | 3 | `data/` (pendiente) | 📋 | modeling, strsearch, regex, parsing, data_base, integracion_etl |
 | 4 | `math/` (pendiente) | 📋 | statistics, linear_algebra |
 
 ---
 
-## 🚀 Comenzar / Start
+## ▶️ Siguiente / Next
 
-👉 Empieza en [`foundations/`](foundations/) — módulo [`hello_world`](foundations/hello_world/).  
-👉 Start at [`foundations/`](foundations/) — module [`hello_world`](foundations/hello_world/).
+👉 Explora los módulos disponibles en [`foundations/`](foundations/) y [`algorithms/`](algorithms/).
 
-### 🌐 Otras implementaciones / Other implementations
-
-Este proyecto también está implementado en otros lenguajes. Explora el [repositorio principal](https://github.com/yorche3/programming_languages) para ver todas las versiones.
+👉 Explore the available modules in [`foundations/`](foundations/) and [`algorithms/`](algorithms/).
 
 ---
 
 *[← Volver a Ada](../README.md)*
+
+*🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages) · [GitHub Pages](https://yorche3.github.io/programming_languages/)*

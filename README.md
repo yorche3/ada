@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Ada
-description: Monorepo de aprendizaje y experimentación con Ada — fundamentos, microservicios, interfaces gráficas, SAST y CI/CD / Learning and experimentation monorepo with Ada — foundations, microservices, GUI, SAST and CI/CD
+description: Implementaciones en Ada de las especificaciones del monorepo, por fases, más la herramienta de análisis estático sastada / Ada implementations of the monorepo specifications, by phase, plus the sastada static-analysis tool
 nav_order: 1
 has_children: true
 ---
@@ -12,9 +12,36 @@ has_children: true
 
 ---
 
-**ES:** Monorepo de aprendizaje y experimentación con **Ada** — desde fundamentos del lenguaje hasta microservicios, interfaces gráficas, SAST y CI/CD.
+**ES:** Implementaciones en **Ada** de las especificaciones del monorepo, organizadas por fases bajo `core/`, más la herramienta de análisis estático `sastada`. La toolchain se gestiona con **Alire**.
 
-**EN:** Learning and experimentation monorepo with **Ada** — from language foundations to microservices, GUI, SAST and CI/CD.
+**EN:** **Ada** implementations of the monorepo specifications, organised by phase under `core/`, plus the `sastada` static-analysis tool. The toolchain is managed with **Alire**.
+
+---
+
+## 📂 Módulos / Modules
+
+| Carpeta / Folder | Contenido / Contents |
+|------------------|----------------------|
+| [`core/`](core/) | Módulos del roadmap, por fases. **Fase 0 — Fundamentos**: `hello_world`, `hello_user`, `unit_test/calculator`, `numbers`. **Fase 1 — Algoritmos Puros**: `naive_sort`, `data_structures_basics` |
+| [`sastada/`](sastada/) | Herramienta de análisis estático de seguridad (SAST) para Ada, con reglas propias y salida en formato SonarQube |
+
+---
+
+## ▶️ Comenzar / Getting Started
+
+```bash
+# Ver la toolchain gestionada por Alire / Check the Alire-managed toolchain
+alr toolchain
+
+# Fundamentos: proyecto manual / Foundations: manual project
+cd core/foundations/hello_world
+alr exec -- gprbuild -P hello_world.gpr && ./bin/hello_world
+
+# Bibliotecas con suite de pruebas / Libraries with a test suite
+cd ../numbers && alr -C tests run
+cd ../../algorithms/naive_sort && alr -C tests run
+cd ../data_structures_basics && alr -C tests run
+```
 
 ---
 
@@ -46,11 +73,6 @@ alr toolchain --select gprbuild=25.0.1
 # 3. Verificar / Verify
 alr toolchain
 ```
-
-> **Tip:** Usa el [`Dockerfile`](Dockerfile) para un entorno reproducible:
-> ```bash
-> docker build -t ada-env . && docker run --rm -v $(pwd):/workspace -w /workspace ada-env
-> ```
 
 ---
 
@@ -160,68 +182,7 @@ alr -C tests run
 
 ---
 
-## 🧩 Submódulos / Submodules
-
-### `core/` — Fundamentos ([docs](https://yorche3.github.io/programming_languages/core/foundations/))
-
-**ES:** Implementaciones siguiendo la estructura definida en las especificaciones. Cada proyecto es **manual** (sin `alr init`), con archivos mínimos.
-
-**EN:** Implementations following the structure defined in the specifications. Each project is **manual** (without `alr init`), with minimal files.
-
-| Proyecto / Project | Especificación / Specification | Enfoque / Approach |
-|-------------------|-------------------------------|-------------------|
-| [`hello_world`](core/foundations/hello_world/) | [01_Hello_World](https://yorche3.github.io/programming_languages/core/foundations/01_Hello_World/) | Manual (`--bin`) |
-| [`hello_user`](core/foundations/hello_user/) | [02_Hello_User](https://yorche3.github.io/programming_languages/core/foundations/02_Hello_User/) | Manual (`--bin`) |
-| [`unit_test/calculator`](core/foundations/unit_test/calculator/) | [03_Unit_Test_Calculator](https://yorche3.github.io/programming_languages/core/foundations/03_Unit_Test_Calculator/) | `--lib` + subproyecto `tests/` `--bin` |
-
-### `learning/` — Proyectos de aprendizaje / Learning projects
-
-**ES:** Proyectos previos de referencia. Usan estructura `src/` + `test/` con AUnit.
-
-**EN:** Previous reference projects. Use `src/` + `test/` structure with AUnit.
-
-| Proyecto / Project | Descripción / Description |
-|-------------------|--------------------------|
-| [`helloworld`](learning/helloworld/) | `Ada.Text_IO.Put_Line("Hello, World!")` |
-| [`hellouser`](learning/hellouser/) | Entrada de usuario con `Get_Line` / User input |
-| [`numbers`](learning/numbers/) | Algoritmos numéricos (Fibonacci, factorial, suma) |
-| [`unit_test`](learning/unit_test/) | Demo de pruebas unitarias con AUnit |
-| [`words`](learning/words/) | Procesamiento de texto (conteo, análisis) |
-
-### `console_training/` — CLI
-
-**ES:** Aplicaciones de terminal con `gnatcoll`.
-
-**EN:** Terminal applications with `gnatcoll`.
-
-```bash
-cd console_training/consapp
-alr build && alr run consapp
-```
-
-### `gui_training/` — GUI
-
-**ES:** Interfaces gráficas con [GtkAda](https://github.com/AdaCore/gtkada).
-
-**EN:** Graphical interfaces with [GtkAda](https://github.com/AdaCore/gtkada).
-
-```bash
-cd gui_training/guiapp
-alr build && alr run guiapp
-```
-
-### `microservices/` — APIs
-
-| Proyecto / Project | Tipo / Type | Dependencias / Dependencies |
-|-------------------|-------------|---------------------------|
-| `ms_rest` | REST con [AWS](https://github.com/AdaCore/aws) | `aws`, `gnatcoll`, `aunit` |
-| `ms_soap` | SOAP con [Matreshka](https://forge.ada-ru.org/matreshka) | `aws`, `gnatcoll`, `xmlada`, `matreshka_soap`, `aunit` |
-
-```bash
-cd microservices/ms_rest   # o ms_soap
-alr build && alr run ms_rest
-alr run run_tests          # Pruebas de integración
-```
+## 🧩 Proyecto adicional / Additional project
 
 ### `sastada/` — SAST
 
@@ -238,24 +199,7 @@ alr build && alr run sastada -- --help
 
 ---
 
-## 🐳 Docker / CI/CD
-
-**ES:** El [`Dockerfile`](Dockerfile) construye una imagen **Ubuntu 24.04** con Alire 2.1.0 y la toolchain completa. El [`Jenkinsfile`](Jenkinsfile) define un pipeline que compila todos los submódulos.
-
-**EN:** The [`Dockerfile`](Dockerfile) builds an **Ubuntu 24.04** image with Alire 2.1.0 and the full toolchain. The [`Jenkinsfile`](Jenkinsfile) defines a pipeline that compiles all submodules.
-
-```bash
-# Construir / Build
-docker build -t ada-env .
-
-# Usar / Use (ej: compilar core/foundations/hello_world)
-docker run --rm -v $(pwd):/workspace -w /workspace ada-env \
-    bash -c "cd core/foundations/hello_world && alr exec -- gprbuild -P hello_world.gpr"
-```
-
----
-
-## 📚 Recursos / Resources
+## 📖 Recursos / Resources
 
 - [Documentación Ada — learn.adacore.com](https://learn.adacore.com/)
 - [Alire Package Manager](https://alire.ada.dev/) · [Docs](https://alire.ada.dev/docs/) · [GitHub](https://github.com/alire-project/alire)
