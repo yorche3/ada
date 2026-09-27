@@ -46,15 +46,39 @@ foundations/
 
 ---
 
+## 🛠️ Patrón común / Common Pattern
+
+| Característica | Descripción |
+|---------------|-------------|
+| **Runtime** | Alire 2.1.0 con `gnat_native` 15.2.1 y `gprbuild` 25.0.1 |
+| **CLI** | `alr exec -- gprbuild -P {modulo}.gpr` en los manuales; `alr build` y `alr -C tests run` en los que llevan suite |
+| **Andamiaje** | `hello_world` y `hello_user` son manuales; `unit_test/calculator` y `numbers` usan `alr init --lib` + `alr init --bin tests` |
+| **Framework de tests** | AUnit 26.0.0 en los módulos con suite |
+| **Separación** | `src/` (contrato `.ads` + implementación `.adb`) ↔ `tests/` (subproyecto ejecutable) en los módulos con suite |
+| **Artefactos** | `obj/`, `lib/`, `bin/`, `alire/` y `config/` los ignora el `.gitignore` de cada módulo |
+
+---
+
+## 🚀 Compilación rápida / Quick Build
+
+```bash
+# Proyecto manual / Manual project
+cd hello_world && alr exec -- gprbuild -P hello_world.gpr && ./bin/hello_world
+
+# Módulos con suite / Modules with a suite
+cd ../numbers && alr -C tests run
+cd ../unit_test/calculator && alr -C tests run
+```
+
+---
+
 ## ▶️ Siguiente / Next
 
 👉 Después de fundamentos, continúa con [Fase 1 — Algoritmos Puros](https://yorche3.github.io/programming_languages/ROADMAP/#fase-1--algoritmos-puros--algorithms-pure-).  
 👉 After foundations, continue with [Phase 1 — Algorithms Pure](https://yorche3.github.io/programming_languages/ROADMAP/#fase-1--algoritmos-puros--algorithms-pure-).
 
-### 🌐 Otras implementaciones / Other implementations
-
-Este proyecto también está implementado en otros lenguajes. Explora el [repositorio principal](https://github.com/yorche3/programming_languages) para ver todas las versiones.
-
 ---
 
-*[← Volver a Ada](../../README.md)*
+*[← Volver a Core](../README.md)*
+
+*🌐 [github.com/yorche3/programming_languages](https://github.com/yorche3/programming_languages) · [GitHub Pages](https://yorche3.github.io/programming_languages/)*
