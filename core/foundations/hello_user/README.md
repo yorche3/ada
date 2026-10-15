@@ -62,7 +62,7 @@ procedure Hello_User is
     Name : String(1 .. 100);
     Length : Natural;
 begin
-    Put("What is your name? ");
+    Put("Enter your name: ");
     Get_Line(Name, Length);
     Put_Line("Hello, " & Name(1 .. Length) & "!");
 end Hello_User;
@@ -110,7 +110,7 @@ alr run
 **Salida esperada / Expected output:**
 
 ```text
-What is your name? Ada
+Enter your name: Ada
 Hello, Ada!
 ```
 
