@@ -1,14 +1,15 @@
 package Data_Structures_Advanced is
    type Node is abstract tagged private;
 
-   procedure Make (New_Node : out Node; Value : Integer);
+   --  Se define un nodo genérico, pero no se puede instanciar directamente.
+   --  Por eso, la creación de un nodo se hace en los tipos derivados.
+   --  procedure Make (New_Node : out Node; Value : Integer);
    function Get_Value (Item : Node) return Integer;
 
    type Tree_Node is tagged;
    type Tree_Node_Access is access all Tree_Node;
    type Tree_Node is new Node with private;
 
-   overriding
    procedure Make (New_Node : out Tree_Node; Value : Integer);
    overriding
    function Get_Value (Item : Tree_Node) return Integer;
@@ -43,8 +44,13 @@ package Data_Structures_Advanced is
    function Is_Empty (Item : Graph) return Boolean;
    function Size (Item : Graph) return Natural;
 
+   --  Un nodo enlazado en un árbol es del árbol: lo libera `Free (Tree)`.
+   --  Este `Free` es para el nodo suelto que el cliente reserva y enlaza él.
+   procedure Free (Item : in out Tree_Node_Access);
+
    procedure Free (Tree : in out Binary_Tree);
    procedure Free (Item : in out Graph);
+   procedure Free (Neighbors : in out Neighbor_Array_Access);
 
 private
    type Node is abstract tagged record
@@ -74,7 +80,6 @@ private
       Neighbors : Neighbor_Node_Access := null;
    end record;
 
-   overriding
    procedure Make (New_Node : out Graph_Node; Value : Integer);
 
    type Graph_Node_Access is access all Graph_Node;

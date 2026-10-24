@@ -1,11 +1,6 @@
 with Ada.Unchecked_Deallocation;
 
 package body Data_Structures_Advanced is
-   procedure Make (New_Node : out Node; Value : Integer) is
-      pragma Unreferenced (Value);
-   begin
-      New_Node.Value := 0;
-   end Make;
 
    function Get_Value (Item : Node) return Integer is
       pragma Unreferenced (Item);
@@ -13,7 +8,6 @@ package body Data_Structures_Advanced is
       return 0;
    end Get_Value;
 
-   overriding
    procedure Make (New_Node : out Tree_Node; Value : Integer) is
       pragma Unreferenced (Value);
    begin
@@ -89,7 +83,6 @@ package body Data_Structures_Advanced is
       return 0;
    end Size;
 
-   overriding
    procedure Make (New_Node : out Graph_Node; Value : Integer) is
       pragma Unreferenced (Value);
    begin
@@ -136,6 +129,13 @@ package body Data_Structures_Advanced is
    begin
       return 0;
    end Size;
+
+   procedure Free (Item : in out Tree_Node_Access) is
+      procedure Free_Access is
+         new Ada.Unchecked_Deallocation (Tree_Node, Tree_Node_Access);
+   begin
+      Free_Access (Item);
+   end Free;
 
    procedure Free (Tree : in out Binary_Tree) is
       procedure Free_Access is
@@ -190,5 +190,12 @@ package body Data_Structures_Advanced is
          Free_Array (Item.Nodes);
       end if;
       Item := (others => <>);
+   end Free;
+
+   procedure Free (Neighbors : in out Neighbor_Array_Access) is
+      procedure Free_Array is
+         new Ada.Unchecked_Deallocation (Neighbor_Array, Neighbor_Array_Access);
+   begin
+      Free_Array (Neighbors);
    end Free;
 end Data_Structures_Advanced;

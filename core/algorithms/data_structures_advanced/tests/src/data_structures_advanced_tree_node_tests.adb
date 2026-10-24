@@ -1,13 +1,8 @@
-with Ada.Unchecked_Deallocation;
-
 with AUnit.Assertions; use AUnit.Assertions;
 
 with Data_Structures_Advanced; use Data_Structures_Advanced;
 
 package body Data_Structures_Advanced_Tree_Node_Tests is
-   procedure Release is new Ada.Unchecked_Deallocation
-     (Tree_Node, Tree_Node_Access);
-
    --  Casos: «Crear un nodo de árbol».
    procedure Test_Make (Self : in out Test) is
       pragma Unreferenced (Self);
@@ -64,7 +59,7 @@ package body Data_Structures_Advanced_Tree_Node_Tests is
       Assert (Get_Left (Child.all) = null
               and then Get_Right (Child.all) = null,
               "TreeNode.Set_Left: the child's own links should be absent");
-      Release (Child);
+      Free (Child);
    end Test_Set_Left;
 
    --  Casos: «Enlazar dos hijos» y «Recorrer cada enlace» (derecha).
@@ -83,6 +78,6 @@ package body Data_Structures_Advanced_Tree_Node_Tests is
       Assert (Get_Left (Child.all) = null
               and then Get_Right (Child.all) = null,
               "TreeNode.Set_Right: the child's own links should be absent");
-      Release (Child);
+      Free (Child);
    end Test_Set_Right;
 end Data_Structures_Advanced_Tree_Node_Tests;

@@ -1,13 +1,8 @@
-with Ada.Unchecked_Deallocation;
-
 with AUnit.Assertions; use AUnit.Assertions;
 
 with Data_Structures_Advanced; use Data_Structures_Advanced;
 
 package body Data_Structures_Advanced_Graph_Tests is
-   procedure Release is new Ada.Unchecked_Deallocation
-     (Neighbor_Array, Neighbor_Array_Access);
-
    --  Casos: «Crear con capacidad válida» y «Capacidad inválida».
    procedure Test_Make (Self : in out Test) is
       pragma Unreferenced (Self);
@@ -97,14 +92,14 @@ package body Data_Structures_Advanced_Graph_Tests is
       Assert (Neighbors /= null, "Graph.Get_Neighbors should succeed");
       Assert (Neighbors.all = Expected,
               "Graph.Get_Neighbors should return 1, 2, 3 in order");
-      Release (Neighbors);
+      Free (Neighbors);
 
       Neighbors := Get_Neighbors (Item, 3);
       Assert (Neighbors /= null,
               "Graph.Get_Neighbors should succeed on a node with no edges");
       Assert (Neighbors.all'Length = 0,
               "Graph.Get_Neighbors should return an empty sequence");
-      Release (Neighbors);
+      Free (Neighbors);
 
       Assert (Get_Neighbors (Item, 4) = null,
               "Graph.Get_Neighbors should fail on a label out of range");
