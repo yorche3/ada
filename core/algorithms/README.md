@@ -12,7 +12,7 @@ Los módulos de esta fase siguen el patrón **biblioteca (`alr init --lib`) + su
 |--------|---------------|---------|:-----:|:------:|
 | [`naive_sort/`](naive_sort/) | [05_Naive_Sort](https://yorche3.github.io/programming_languages/core/algorithms/05_Naive_Sort/) | `--lib` + `tests/` (`--bin`) | 3 | ✅ |
 | [`data_structures_basics/`](data_structures_basics/) | [06_Data_Structures_Basics](https://yorche3.github.io/programming_languages/core/algorithms/06_Data_Structures_Basics/) | `--lib` + `tests/` (`--bin`) | 4 | ✅ |
-| `data_structures_advanced` | [07_Data_Structures_Advanced](https://yorche3.github.io/programming_languages/core/algorithms/07_Data_Structures_Advanced/) | — | — | 📋 |
+| [`data_structures_advanced/`](data_structures_advanced/) | [07_Data_Structures_Advanced](https://yorche3.github.io/programming_languages/core/algorithms/07_Data_Structures_Advanced/) | `--lib` + `tests/` (`--bin`) | 19 | ✅ |
 | `efficient_sort` | [08_Efficient_Sort](https://yorche3.github.io/programming_languages/core/algorithms/08_Efficient_Sort/) | — | — | 📋 |
 | `distributed_sort` | [09_Distributed_Sort](https://yorche3.github.io/programming_languages/core/algorithms/09_Distributed_Sort/) | — | — | 📋 |
 | `searching` | [10_Searching](https://yorche3.github.io/programming_languages/core/algorithms/10_Searching/) | — | — | 📋 |
@@ -37,15 +37,26 @@ algorithms/
 │   ├── naive_sort.gpr
 │   ├── alire.toml
 │   └── README.md
-└── data_structures_basics/         # 06_Data_Structures_Basics — lib + tests
+├── data_structures_basics/         # 06_Data_Structures_Basics — lib + tests
+│   ├── src/
+│   │   ├── data_structures_basics.ads
+│   │   └── data_structures_basics.adb
+│   ├── tests/
+│   │   ├── src/
+│   │   ├── tests.gpr
+│   │   └── alire.toml
+│   ├── data_structures_basics.gpr
+│   ├── alire.toml
+│   └── README.md
+└── data_structures_advanced/       # 07_Data_Structures_Advanced — lib + tests
     ├── src/
-    │   ├── data_structures_basics.ads
-    │   └── data_structures_basics.adb
+    │   ├── data_structures_advanced.ads
+    │   └── data_structures_advanced.adb
     ├── tests/
     │   ├── src/
     │   ├── tests.gpr
     │   └── alire.toml
-    ├── data_structures_basics.gpr
+    ├── data_structures_advanced.gpr
     ├── alire.toml
     └── README.md
 ```
@@ -76,6 +87,9 @@ cd naive_sort && alr build && alr -C tests run
 
 # Data Structures Basics
 cd ../data_structures_basics && alr build && alr -C tests run
+
+# Data Structures Advanced
+cd ../data_structures_advanced && alr build && alr -C tests run
 ```
 
 ---

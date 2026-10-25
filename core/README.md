@@ -11,7 +11,7 @@
 | Fase | Directorio | Estado | Contenido |
 |------|-----------|--------|-----------|
 | 0 | [`foundations/`](foundations/) | ✅ | `hello_world`, `hello_user`, `unit_test/calculator`, `numbers` |
-| 1 | [`algorithms/`](algorithms/) | 🔄 | `naive_sort` ✅, `data_structures_basics` ✅; pendientes `data_structures_advanced`, `efficient_sort`, `distributed_sort`, `searching` |
+| 1 | [`algorithms/`](algorithms/) | 🔄 | `naive_sort` ✅, `data_structures_basics` ✅, `data_structures_advanced` ✅; pendientes `efficient_sort`, `distributed_sort`, `searching` |
 | 2 | `text/` (pendiente) | 📋 | transformations, patterns, substr, input_output, etl_basico |
 | 3 | `data/` (pendiente) | 📋 | modeling, strsearch, regex, parsing, data_base, integracion_etl |
 | 4 | `math/` (pendiente) | 📋 | statistics, linear_algebra |
