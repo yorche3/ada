@@ -3,135 +3,157 @@ with AUnit.Assertions; use AUnit.Assertions;
 with Data_Structures_Advanced; use Data_Structures_Advanced;
 
 package body Data_Structures_Advanced_Binary_Tree_Tests is
-   --  Casos: «Crear con capacidad válida» y «Capacidad inválida».
+   --  Casos: «Crear vacío».
    procedure Test_Make (Self : in out Test) is
       pragma Unreferenced (Self);
-      Valid   : Binary_Tree;
-      Invalid : Binary_Tree;
+      Tree : Binary_Tree;
    begin
-      Make (Valid, 5);
-      Assert (Is_Empty (Valid), "BinaryTree.Make: a new tree is empty");
-      Assert (Size (Valid) = 0, "BinaryTree.Make: a new tree has size 0");
-
-      Make (Invalid, 0);
-      Assert (Is_Empty (Invalid),
-              "BinaryTree.Make: an invalid capacity is unusable");
-      Assert (Size (Invalid) = 0,
-              "BinaryTree.Make: an invalid capacity has size 0");
-
-      Free (Valid);
-      Free (Invalid);
+      Make (Tree);
+      Assert (Is_Empty (Tree), "BinaryTree.Make: a new tree is empty");
+      Assert (Size (Tree) = 0, "BinaryTree.Make: a new tree has size 0");
+      Assert (not Contains (Tree, 50),
+              "BinaryTree.Make: an empty tree does not contain 50");
+      Free (Tree);
    end Test_Make;
 
-   --  Casos: «Insertar la raíz», «Duplicado con capacidad llena» y
-   --  «Capacidad agotada».
+   --  Casos: «Insertar la raíz», «Insertar menor y mayor», «Ramas de varios
+   --  niveles», «Duplicado idempotente» e «Inserciones ordenadas».
    procedure Test_Insert (Self : in out Test) is
       pragma Unreferenced (Self);
-      Tree    : Binary_Tree;
-      Dup     : Binary_Tree;
-      Full    : Binary_Tree;
-      Success : Boolean;
+      Root      : Binary_Tree;
+      Branches  : Binary_Tree;
+      Duplicate : Binary_Tree;
+      Ordered   : Binary_Tree;
    begin
-      Make (Tree, 5);
-      Insert (Tree, 50, Success);
-      Assert (Success, "BinaryTree.Insert should accept the root");
-      Assert (Size (Tree) = 1, "BinaryTree.Insert: size should be 1");
+      Make (Root);
+      Insert (Root, 50);
+      Assert (Size (Root) = 1, "BinaryTree.Insert: the root gives size 1");
+      Assert (not Is_Empty (Root),
+              "BinaryTree.Insert: one value is not empty");
+      Assert (Contains (Root, 50),
+              "BinaryTree.Insert: the root is present");
 
-      Make (Dup, 1);
-      Insert (Dup, 50, Success);
-      Assert (Success, "BinaryTree.Insert should accept the first 50");
-      Insert (Dup, 50, Success);
-      Assert (Success, "BinaryTree.Insert should accept a duplicate");
-      Assert (Size (Dup) = 1, "BinaryTree.Insert: the duplicate counts once");
+      Make (Branches);
+      Insert (Branches, 50);
+      Insert (Branches, 30);
+      Insert (Branches, 70);
+      Assert (Size (Branches) = 3,
+              "BinaryTree.Insert: three values give size 3");
+      Insert (Branches, 20);
+      Insert (Branches, 40);
+      Assert (Size (Branches) = 5,
+              "BinaryTree.Insert: five values give size 5");
 
-      Make (Full, 3);
-      Insert (Full, 50, Success);
-      Assert (Success, "BinaryTree.Insert should accept 50");
-      Insert (Full, 30, Success);
-      Assert (Success, "BinaryTree.Insert should accept 30");
-      Insert (Full, 70, Success);
-      Assert (Success, "BinaryTree.Insert should accept 70");
-      Insert (Full, 20, Success);
-      Assert (not Success,
-              "BinaryTree.Insert should reject an insert over capacity");
-      Assert (Size (Full) = 3,
-              "BinaryTree.Insert: a rejected insert keeps size at 3");
+      Make (Duplicate);
+      Insert (Duplicate, 50);
+      Insert (Duplicate, 30);
+      Insert (Duplicate, 70);
+      Insert (Duplicate, 30);
+      Assert (Size (Duplicate) = 3,
+              "BinaryTree.Insert: a duplicate does not grow size");
 
-      Free (Tree);
-      Free (Dup);
-      Free (Full);
+      Make (Ordered);
+      Insert (Ordered, 20);
+      Insert (Ordered, 30);
+      Insert (Ordered, 40);
+      Insert (Ordered, 50);
+      Insert (Ordered, 70);
+      Assert (Size (Ordered) = 5,
+              "BinaryTree.Insert: ordered insertions give size 5");
+
+      Free (Root);
+      Free (Branches);
+      Free (Duplicate);
+      Free (Ordered);
    end Test_Insert;
 
-   --  Casos: «Insertar menor y mayor», «Propiedad ABB», «Valor ausente» y
-   --  «Capacidad agotada» (consulta del valor rechazado).
+   --  Casos: «Insertar menor y mayor», «Ramas de varios niveles», «Valor
+   --  ausente en árbol no vacío» e «Inserciones ordenadas».
    procedure Test_Contains (Self : in out Test) is
       pragma Unreferenced (Self);
       Tree    : Binary_Tree;
-      Full    : Binary_Tree;
-      Success : Boolean;
+      Present : Binary_Tree;
+      Ordered : Binary_Tree;
    begin
-      Make (Tree, 5);
-      Insert (Tree, 50, Success);
-      Insert (Tree, 30, Success);
-      Insert (Tree, 70, Success);
+      Make (Tree);
+      Insert (Tree, 50);
+      Insert (Tree, 30);
+      Insert (Tree, 70);
       Assert (Contains (Tree, 30), "BinaryTree.Contains should find 30");
       Assert (Contains (Tree, 70), "BinaryTree.Contains should find 70");
 
-      Insert (Tree, 20, Success);
-      Insert (Tree, 40, Success);
-      Assert (Contains (Tree, 50), "BinaryTree.Contains should find 50");
-      Assert (Contains (Tree, 20), "BinaryTree.Contains should find 20");
-      Assert (Contains (Tree, 40), "BinaryTree.Contains should find 40");
-      Assert (not Contains (Tree, 99),
+      Make (Present);
+      Insert (Present, 50);
+      Assert (not Contains (Present, 99),
               "BinaryTree.Contains should not find an absent value");
+      Assert (Contains (Present, 50),
+              "BinaryTree.Contains: 50 is still present");
+      Assert (Size (Present) = 1,
+              "BinaryTree.Contains: a failed query does not change size");
 
-      Make (Full, 3);
-      Insert (Full, 50, Success);
-      Insert (Full, 30, Success);
-      Insert (Full, 70, Success);
-      Insert (Full, 20, Success);
-      Assert (not Contains (Full, 20),
-              "BinaryTree.Contains should not find a rejected value");
+      Make (Ordered);
+      Insert (Ordered, 20);
+      Insert (Ordered, 30);
+      Insert (Ordered, 40);
+      Insert (Ordered, 50);
+      Insert (Ordered, 70);
+      Assert (Contains (Ordered, 20) and then Contains (Ordered, 70),
+              "BinaryTree.Contains: the extremes are present");
+      Assert (not Contains (Ordered, 99),
+              "BinaryTree.Contains: 99 is absent from ordered insertions");
 
       Free (Tree);
-      Free (Full);
+      Free (Present);
+      Free (Ordered);
    end Test_Contains;
 
-   --  Casos: «Tamaño y vacío».
+   --  Casos: «Crear vacío» e «Insertar la raíz».
    procedure Test_Is_Empty (Self : in out Test) is
       pragma Unreferenced (Self);
-      Tree    : Binary_Tree;
-      Success : Boolean;
+      Tree : Binary_Tree;
    begin
-      Make (Tree, 5);
+      Make (Tree);
       Assert (Is_Empty (Tree), "BinaryTree.Is_Empty: a new tree is empty");
-      Insert (Tree, 50, Success);
+      Insert (Tree, 50);
       Assert (not Is_Empty (Tree),
               "BinaryTree.Is_Empty: one insert is not empty");
       Free (Tree);
    end Test_Is_Empty;
 
-   --  Casos: «Tamaño y vacío», «Insertar menor y mayor» y «Propiedad ABB».
+   --  Casos: «Insertar menor y mayor», «Ramas de varios niveles» y «Duplicado
+   --  idempotente».
    procedure Test_Size (Self : in out Test) is
       pragma Unreferenced (Self);
-      Tree    : Binary_Tree;
-      Big     : Binary_Tree;
-      Success : Boolean;
+      Tree      : Binary_Tree;
+      Branches  : Binary_Tree;
+      Duplicate : Binary_Tree;
    begin
-      Make (Tree, 5);
+      Make (Tree);
       Assert (Size (Tree) = 0, "BinaryTree.Size: a new tree has size 0");
-      Insert (Tree, 50, Success);
+      Insert (Tree, 50);
       Assert (Size (Tree) = 1, "BinaryTree.Size: one insert gives size 1");
 
-      Make (Big, 5);
-      Insert (Big, 50, Success);
-      Insert (Big, 30, Success);
-      Insert (Big, 70, Success);
-      Insert (Big, 20, Success);
-      Insert (Big, 40, Success);
-      Assert (Size (Big) = 5, "BinaryTree.Size: five inserts give size 5");
+      Make (Branches);
+      Insert (Branches, 50);
+      Insert (Branches, 30);
+      Insert (Branches, 70);
+      Assert (Size (Branches) = 3,
+              "BinaryTree.Size: three inserts give size 3");
+      Insert (Branches, 20);
+      Insert (Branches, 40);
+      Assert (Size (Branches) = 5,
+              "BinaryTree.Size: five inserts give size 5");
+
+      Make (Duplicate);
+      Insert (Duplicate, 50);
+      Insert (Duplicate, 30);
+      Insert (Duplicate, 70);
+      Insert (Duplicate, 30);
+      Assert (Size (Duplicate) = 3,
+              "BinaryTree.Size: a duplicate does not grow size");
 
       Free (Tree);
-      Free (Big);
+      Free (Branches);
+      Free (Duplicate);
    end Test_Size;
 end Data_Structures_Advanced_Binary_Tree_Tests;

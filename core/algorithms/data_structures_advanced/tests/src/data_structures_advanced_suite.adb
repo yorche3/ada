@@ -28,7 +28,8 @@ package body Data_Structures_Advanced_Suite is
         (Tree_Node_Caller.Create
            ("TreeNode.Get_Right", Test_Get_Right'Access));
       Result.Add_Test
-        (Tree_Node_Caller.Create ("TreeNode.Set_Left", Test_Set_Left'Access));
+        (Tree_Node_Caller.Create
+           ("TreeNode.Set_Left", Test_Set_Left'Access));
       Result.Add_Test
         (Tree_Node_Caller.Create
            ("TreeNode.Set_Right", Test_Set_Right'Access));
@@ -47,8 +48,8 @@ package body Data_Structures_Advanced_Suite is
         (Binary_Tree_Caller.Create
            ("BinaryTree.Contains", Test_Contains'Access));
       Result.Add_Test
-        (Binary_Tree_Caller.Create ("BinaryTree.Is_Empty",
-                                   Test_Is_Empty'Access));
+        (Binary_Tree_Caller.Create
+           ("BinaryTree.Is_Empty", Test_Is_Empty'Access));
       Result.Add_Test
         (Binary_Tree_Caller.Create ("BinaryTree.Size", Test_Size'Access));
       return Result;
@@ -61,6 +62,8 @@ package body Data_Structures_Advanced_Suite is
       Result.Add_Test
         (Graph_Caller.Create ("Graph.Make", Test_Make'Access));
       Result.Add_Test
+        (Graph_Caller.Create ("Graph.Add_Vertex", Test_Add_Vertex'Access));
+      Result.Add_Test
         (Graph_Caller.Create ("Graph.Add_Edge", Test_Add_Edge'Access));
       Result.Add_Test
         (Graph_Caller.Create ("Graph.Has_Edge", Test_Has_Edge'Access));
@@ -70,7 +73,10 @@ package body Data_Structures_Advanced_Suite is
       Result.Add_Test
         (Graph_Caller.Create ("Graph.Is_Empty", Test_Is_Empty'Access));
       Result.Add_Test
-        (Graph_Caller.Create ("Graph.Size", Test_Size'Access));
+        (Graph_Caller.Create
+           ("Graph.Vertex_Count", Test_Vertex_Count'Access));
+      Result.Add_Test
+        (Graph_Caller.Create ("Graph.Edge_Count", Test_Edge_Count'Access));
       return Result;
    end Graph_Suite;
 
