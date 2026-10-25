@@ -22,7 +22,7 @@ has_children: true
 
 | Carpeta / Folder | Contenido / Contents |
 |------------------|----------------------|
-| [`core/`](core/) | Módulos del roadmap, por fases. **Fase 0 — Fundamentos**: `hello_world`, `hello_user`, `unit_test/calculator`, `numbers`. **Fase 1 — Algoritmos Puros**: `naive_sort`, `data_structures_basics` |
+| [`core/`](core/) | Módulos del roadmap, por fases. **Fase 0 — Fundamentos**: `hello_world`, `hello_user`, `unit_test/calculator`, `numbers`. **Fase 1 — Algoritmos Puros**: `naive_sort`, `data_structures_basics`, `data_structures_advanced` |
 | [`sastada/`](sastada/) | Herramienta de análisis estático de seguridad (SAST) para Ada, con reglas propias y salida en formato SonarQube |
 
 ---
@@ -41,6 +41,7 @@ alr exec -- gprbuild -P hello_world.gpr && ./bin/hello_world
 cd ../numbers && alr -C tests run
 cd ../../algorithms/naive_sort && alr -C tests run
 cd ../data_structures_basics && alr -C tests run
+cd ../data_structures_advanced && alr -C tests run
 ```
 
 ---
