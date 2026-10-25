@@ -94,4 +94,6 @@ private
       Vertices : Natural := 0;
       Edges    : Natural := 0;
    end record;
+
+   function Find_Vertex (Item : Graph; Label : Integer) return Graph_Node_Access;
 end Data_Structures_Advanced;
