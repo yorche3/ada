@@ -3,64 +3,51 @@ with Ada.Unchecked_Deallocation;
 package body Data_Structures_Advanced is
 
    function Get_Value (Item : Node) return Integer is
-      pragma Unreferenced (Item);
    begin
-      return 0;
+      return Item.Value;
    end Get_Value;
 
    procedure Make (New_Node : out Tree_Node; Value : Integer) is
-      pragma Unreferenced (Value);
    begin
-      New_Node.Value := 0;
+      New_Node.Value := Value;
       New_Node.Left := null;
       New_Node.Right := null;
    end Make;
 
-   overriding
    function Get_Value (Item : Tree_Node) return Integer is
-      pragma Unreferenced (Item);
    begin
-      return 0;
+      return Item.Value;
    end Get_Value;
 
    function Get_Left (Item : Tree_Node) return Tree_Node_Access is
-      pragma Unreferenced (Item);
    begin
-      return null;
+      return Item.Left;
    end Get_Left;
 
    function Get_Right (Item : Tree_Node) return Tree_Node_Access is
-      pragma Unreferenced (Item);
    begin
-      return null;
+      return Item.Right;
    end Get_Right;
 
    procedure Set_Left
-     (Item : in out Tree_Node; Left : Tree_Node_Access)
-   is
-      pragma Unreferenced (Item, Left);
+     (Item : in out Tree_Node; Left : Tree_Node_Access) is
    begin
-      null;
+      Item.Left := Left;
    end Set_Left;
 
    procedure Set_Right
-     (Item : in out Tree_Node; Right : Tree_Node_Access)
-   is
-      pragma Unreferenced (Item, Right);
+     (Item : in out Tree_Node; Right : Tree_Node_Access) is
    begin
-      null;
+      Item.Right := Right;
    end Set_Right;
 
    procedure Make (New_Tree : out Binary_Tree; Capacity : Integer) is
-      pragma Unreferenced (Capacity);
    begin
-      New_Tree := (others => <>);
+      New_Tree := (Root => null, Count => 0, Capacity => Capacity, Usable => True);
    end Make;
 
    procedure Insert
-     (Tree : in out Binary_Tree; Value : Integer; Success : out Boolean)
-   is
-      pragma Unreferenced (Tree, Value);
+     (Tree : in out Binary_Tree; Value : Integer; Success : out Boolean) is
    begin
       Success := False;
    end Insert;
@@ -84,16 +71,15 @@ package body Data_Structures_Advanced is
    end Size;
 
    procedure Make (New_Node : out Graph_Node; Value : Integer) is
-      pragma Unreferenced (Value);
    begin
-      New_Node.Value := 0;
+      New_Node.Value := Value;
       New_Node.Neighbors := null;
    end Make;
 
    procedure Make (New_Graph : out Graph; Capacity : Integer) is
       pragma Unreferenced (Capacity);
    begin
-      New_Graph := (others => <>);
+      New_Graph := (Nodes => null, Edges => 0, Capacity => Capacity, Usable => True);
    end Make;
 
    procedure Add_Edge
